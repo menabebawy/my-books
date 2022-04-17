@@ -27,4 +27,21 @@ public class BookController {
     Book newBook(@RequestBody Book book) {
         return bookRepository.save(book);
     }
+
+    @PutMapping("/{id}")
+    Book updateBook(@RequestBody Book updatedBook, @PathVariable String id) {
+        return bookRepository.findById(id)
+                .map( book -> {
+                    book.setTitle(updatedBook.getTitle());
+                    book.setAuthorId(updatedBook.getAuthorId());
+                    return bookRepository.save(book);
+                })
+                .orElseThrow(() -> new BookNotFoundException(id));
+    }
+
+    @DeleteMapping("/{id}")
+    void deleteBook(@PathVariable String id) {
+        bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
+        bookRepository.deleteById(id);
+    }
 }
