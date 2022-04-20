@@ -1,8 +1,6 @@
 package com.mybooks.api.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Entity;
@@ -12,17 +10,18 @@ import javax.persistence.Id;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 public class Book {
     @Id
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
     private String id;
-    private String title;
-    private String authorId;
 
-    public Book(String title, String authorId) {
-        this.title = title;
-        this.authorId = authorId;
-    }
+    @NonNull
+    private String title;
+
+    @NonNull
+    private String authorId;
 }

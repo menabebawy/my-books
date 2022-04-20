@@ -1,8 +1,9 @@
-package com.mybooks.api.controller;
+package com.mybooks.api.controller.author;
 
 import com.mybooks.api.model.Author;
 import com.mybooks.api.reposiotry.AuthorRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,12 +25,12 @@ public class AuthorController {
     }
 
     @PostMapping("")
-    Author newAuthor(@RequestBody Author author) {
+    Author newAuthor(@RequestBody @Validated Author author) {
         return authorRepository.save(author);
     }
 
     @PutMapping("/{id}")
-    Author updateAuthor(@RequestBody Author updatedAuthor, @PathVariable String id) {
+    Author updateAuthor(@RequestBody Author updatedAuthor, @PathVariable String id) throws AuthorNotFoundException {
         return authorRepository.findById(id)
                 .map( author -> {
                     author.setFirstName(updatedAuthor.getFirstName());
@@ -40,7 +41,7 @@ public class AuthorController {
     }
 
     @DeleteMapping("/{id}")
-    void deleteAuthor(@PathVariable String id) {
+    void deleteAuthor(@PathVariable String id) throws AuthorNotFoundException {
         authorRepository.findById(id).orElseThrow(() -> new AuthorNotFoundException(id));
         authorRepository.deleteById(id);
     }

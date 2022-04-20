@@ -1,4 +1,4 @@
-package com.mybooks.api.controller;
+package com.mybooks.api.controller.author;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;

@@ -1,8 +1,9 @@
-package com.mybooks.api.controller;
+package com.mybooks.api.controller.book;
 
 import com.mybooks.api.model.Book;
 import com.mybooks.api.reposiotry.BookRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public class BookController {
     }
 
     @PostMapping("")
-    Book newBook(@RequestBody Book book) {
+    Book newBook(@RequestBody @Validated Book book) {
         return bookRepository.save(book);
     }
 

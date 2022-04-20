@@ -1,4 +1,4 @@
-package com.mybooks.api.controller;
+package com.mybooks.api.controller.book;
 
 public class BookNotFoundException extends RuntimeException {
     public BookNotFoundException(String id) {
