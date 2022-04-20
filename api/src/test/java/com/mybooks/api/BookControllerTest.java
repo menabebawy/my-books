@@ -1,8 +1,8 @@
 package com.mybooks.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mybooks.api.controller.book.BookController;
-import com.mybooks.api.controller.book.BookNotFoundException;
+import com.mybooks.api.controller.BookController;
+import com.mybooks.api.exception.BookNotFoundException;
 import com.mybooks.api.model.Author;
 import com.mybooks.api.model.Book;
 import com.mybooks.api.reposiotry.BookRepository;
@@ -42,6 +42,8 @@ public class BookControllerTest {
     Author author3 = new Author("Author3_id", "First", "Last");
     Book book3 = new Book("Book3_id", "Title3", author3.getId());
 
+    final private String baseUrl = "/book";
+
     @Test
     public void getAllBook_success() throws Exception {
         List<Book> books = new ArrayList<>(Arrays.asList(book1, book2, book3));
@@ -49,7 +51,7 @@ public class BookControllerTest {
         Mockito.when(bookRepository.findAll()).thenReturn(books);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/books")
+                        .get(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(3)))
@@ -62,7 +64,7 @@ public class BookControllerTest {
         Mockito.when(bookRepository.findById(book1.getId())).thenReturn(Optional.ofNullable(book1));
 
         mockMvc.perform(MockMvcRequestBuilders
-                .get("/books/Book1_id")
+                .get(baseUrl + "/Book1_id")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
@@ -84,7 +86,7 @@ public class BookControllerTest {
 
         Mockito.when(bookRepository.save(book)).thenReturn(book);
 
-        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post("/books")
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(book));
@@ -108,7 +110,7 @@ public class BookControllerTest {
         Mockito.when(bookRepository.findById(book1.getId())).thenReturn(Optional.ofNullable(book1));
         Mockito.when(bookRepository.save(updatedBook)).thenReturn(updatedBook);
 
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put("/books/Book1_id")
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(baseUrl + "/Book1_id")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(updatedBook));
@@ -129,7 +131,7 @@ public class BookControllerTest {
 
         Mockito.when(bookRepository.findById(updatedBook.getId())).thenThrow(new BookNotFoundException("51"));
 
-        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.put("/books/51")
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.put(baseUrl + "/51")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(updatedBook));
@@ -147,7 +149,7 @@ public class BookControllerTest {
         Mockito.when(bookRepository.findById(book2.getId())).thenReturn(Optional.of(book2));
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/books/Book2_id")
+                        .delete(baseUrl + "/Book2_id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
@@ -157,7 +159,7 @@ public class BookControllerTest {
         Mockito.when(bookRepository.findById("51")).thenThrow(new BookNotFoundException("51"));
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/books/51")
+                        .delete(baseUrl + "/51")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(result ->

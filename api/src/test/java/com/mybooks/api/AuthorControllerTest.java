@@ -1,8 +1,8 @@
 package com.mybooks.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mybooks.api.controller.author.AuthorController;
-import com.mybooks.api.controller.author.AuthorNotFoundException;
+import com.mybooks.api.controller.AuthorController;
+import com.mybooks.api.exception.AuthorNotFoundException;
 import com.mybooks.api.model.Author;
 import com.mybooks.api.reposiotry.AuthorRepository;
 import org.hamcrest.Matchers;
@@ -36,6 +36,8 @@ public class AuthorControllerTest {
     Author author2 = new Author("Author2_id", "Adi", "John");
     Author author3 = new Author("Author3_id", "Dodo", "Adel");
 
+    final private String baseUrl = "/book/author";
+
     @Test
     public void getAllAuthors_success() throws Exception {
         List<Author> authors = new ArrayList<>(Arrays.asList(author1, author2, author3));
@@ -43,10 +45,10 @@ public class AuthorControllerTest {
         Mockito.when(authorRepository.findAll()).thenReturn(authors);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/authors")
+                        .get(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(3)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].firstName", Matchers.is("Adi")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].lastName", Matchers.is("John")));
     }
@@ -56,7 +58,7 @@ public class AuthorControllerTest {
         Mockito.when(authorRepository.findById(author1.getId())).thenReturn(Optional.ofNullable(author1));
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/authors/Author1_id")
+                        .get(baseUrl + "/Author1_id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
@@ -74,7 +76,7 @@ public class AuthorControllerTest {
 
         Mockito.when(authorRepository.save(author)).thenReturn(author);
 
-        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post("/authors")
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(author));
@@ -98,7 +100,7 @@ public class AuthorControllerTest {
         Mockito.when(authorRepository.findById(author1.getId())).thenReturn(Optional.ofNullable(author1));
         Mockito.when(authorRepository.save(updatedAuthor1)).thenReturn(updatedAuthor1);
 
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put("/authors/Author1_id")
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(baseUrl + "/Author1_id")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(updatedAuthor1));
@@ -120,7 +122,7 @@ public class AuthorControllerTest {
 
         Mockito.when(authorRepository.findById(updatedAuthor.getId())).thenThrow(new AuthorNotFoundException("51"));
 
-        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.put("/authors/51")
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.put(baseUrl + "/51")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(updatedAuthor));
@@ -138,7 +140,7 @@ public class AuthorControllerTest {
         Mockito.when(authorRepository.findById(author2.getId())).thenReturn(Optional.of(author2));
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/authors/Author2_id")
+                        .delete(baseUrl + "/Author2_id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
@@ -148,7 +150,7 @@ public class AuthorControllerTest {
         Mockito.when(authorRepository.findById("51")).thenThrow(new AuthorNotFoundException("51"));
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/authors/51")
+                        .delete(baseUrl + "/51")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(result ->

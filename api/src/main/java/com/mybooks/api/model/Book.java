@@ -1,5 +1,6 @@
 package com.mybooks.api.model;
 
+import com.sun.istack.NotNull;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -15,13 +16,14 @@ import javax.persistence.Id;
 @Entity
 public class Book {
     @Id
+    @NotNull
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
     private String id;
 
-    @NonNull
+    @NotNull
     private String title;
 
-    @NonNull
+    @NotNull
     private String authorId;
 }
