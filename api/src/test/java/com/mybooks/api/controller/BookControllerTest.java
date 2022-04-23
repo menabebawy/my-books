@@ -1,4 +1,4 @@
-package com.mybooks.api;
+package com.mybooks.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mybooks.api.controller.BookController;

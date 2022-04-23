@@ -30,13 +30,14 @@ public class BookServiceImp implements BookService {
 
     @Override
     public Book updateBook(Book updatedBook, String id) throws BookNotFoundException {
-        return bookRepository.findById(id)
-                .map( book -> {
-                    book.setTitle(updatedBook.getTitle());
-                    book.setAuthorId(updatedBook.getAuthorId());
-                    return bookRepository.save(book);
-                })
-                .orElseThrow(() -> new BookNotFoundException(id));
+        if (getBookById(id) != null) {
+            Book book = getBookById(id);
+            book.setTitle(updatedBook.getTitle());
+            book.setAuthorId(updatedBook.getAuthorId());
+            return book;
+        } else {
+            throw new BookNotFoundException(id);
+        }
     }
 
     @Override

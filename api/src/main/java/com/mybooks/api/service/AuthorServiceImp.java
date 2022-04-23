@@ -30,18 +30,22 @@ public class AuthorServiceImp implements AuthorService {
 
     @Override
     public Author updateAuthor(Author updatedAuthor, String id) throws AuthorNotFoundException {
-        return authorRepository.findById(id)
-                .map( author -> {
-                    author.setFirstName(updatedAuthor.getFirstName());
-                    author.setLastName(updatedAuthor.getLastName());
-                    return authorRepository.save(author);
-                })
-                .orElseThrow(() -> new AuthorNotFoundException(id));
+        if (getAuthorById(id) != null) {
+            Author author = getAuthorById(id);
+            author.setFirstName(updatedAuthor.getFirstName());
+            author.setLastName(updatedAuthor.getLastName());
+            return author;
+        } else {
+            throw new AuthorNotFoundException(id);
+        }
     }
 
     @Override
     public void deleteAuthor(String id) throws AuthorNotFoundException {
-        authorRepository.findById(id).orElseThrow(() -> new AuthorNotFoundException(id));
-        authorRepository.deleteById(id);
+        if (authorRepository.findById(id).isEmpty()) {
+            throw  new AuthorNotFoundException(id);
+        } else {
+            authorRepository.deleteById(id);
+        }
     }
 }

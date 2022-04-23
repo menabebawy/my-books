@@ -1,21 +1,25 @@
-package com.mybooks.api;
+package com.mybooks.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mybooks.api.controller.AuthorController;
 import com.mybooks.api.exception.AuthorNotFoundException;
 import com.mybooks.api.model.Author;
+import com.mybooks.api.reposiotry.AuthorRepository;
 import com.mybooks.api.service.AuthorService;
+import com.mybooks.api.service.AuthorServiceImp;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.*;
 
@@ -23,20 +27,33 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(AuthorController.class)
+@SpringBootTest
 public class AuthorControllerTest {
-    @Autowired
     MockMvc mockMvc;
-    @Autowired
+
     ObjectMapper mapper;
-    @MockBean
+
+    @Mock
     AuthorService authorService;
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
+    @Mock
+    AuthorRepository authorRepository;
 
     Author author1 = new Author("Author1_id", "Sam", "Simon");
     Author author2 = new Author("Author2_id", "Adi", "John");
     Author author3 = new Author("Author3_id", "Dodo", "Adel");
 
     final private String baseUrl = "/book/author";
+
+    @BeforeEach
+    void setUp() {
+        this.mapper = new ObjectMapper();
+        this.authorService = Mockito.spy(new AuthorServiceImp(authorRepository));
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+    }
 
     @Test
     public void getAllAuthors_success() throws Exception {
@@ -67,6 +84,20 @@ public class AuthorControllerTest {
     }
 
     @Test
+    public void getAuthorById_notFound() throws Exception {
+        Mockito.doThrow(new AuthorNotFoundException("51")).when(authorService.getAuthorById("51"));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get(baseUrl + "/51")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(result ->
+                        assertTrue(result.getResolvedException() instanceof AuthorNotFoundException))
+                .andExpect(result ->
+                        assertEquals("Could not find author 51", Objects.requireNonNull(result.getResolvedException()).getMessage()));
+    }
+
+    @Test
     public void createNewAuthor_success() throws Exception {
         Author author = Author.builder()
                 .id("Author_id")
@@ -91,14 +122,15 @@ public class AuthorControllerTest {
     @Test
     public void updateAuthor_success() throws Exception {
         Author updatedAuthor1 = Author.builder()
-                .id("Author1_id")
+                .id(author1.getId())
                 .firstName("Dark")
                 .lastName("Tim")
                 .build();
-
         Mockito.when(authorService.updateAuthor(updatedAuthor1, author1.getId())).thenReturn(updatedAuthor1);
 
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(baseUrl + "/Author1_id")
+        System.out.println(authorService.getAllAuthors());
+
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(baseUrl + "/"+ author1.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(updatedAuthor1));
@@ -135,10 +167,10 @@ public class AuthorControllerTest {
 
     @Test
     public void deleteAuthorById_success() throws Exception {
-        Mockito.when(authorService.getAuthorById(author2.getId())).thenReturn(author2);
+        Mockito.doNothing().when(authorService).deleteAuthor(author1.getId());
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete(baseUrl + "/Author2_id")
+                        .delete(baseUrl + "/" + author1.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
