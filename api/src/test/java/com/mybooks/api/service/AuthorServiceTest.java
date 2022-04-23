@@ -2,6 +2,7 @@ package com.mybooks.api.service;
 
 import com.mybooks.api.exception.AuthorNotFoundException;
 import com.mybooks.api.model.Author;
+import com.mybooks.api.model.MockAuthor;
 import com.mybooks.api.reposiotry.AuthorRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +46,7 @@ public class AuthorServiceTest {
 
     @Test
     void getAuthorById_success() {
-        Author author = newAuthor();
+        Author author = MockAuthor.newAuthor;
         when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
         assertDoesNotThrow(() -> authorService.getAuthorById(author.getId()));
         Author createdAuthor = authorService.getAuthorById(author.getId());
@@ -62,7 +63,7 @@ public class AuthorServiceTest {
 
     @Test
     void createNewAuthor_success() {
-        Author author = newAuthor();
+        Author author = MockAuthor.newAuthor;
         when(authorRepository.save(author)).thenReturn(author);
         Author createdAuthor = authorService.createNewAuthor(author);
         assertEquals(createdAuthor.getFirstName(), author.getFirstName());
@@ -72,8 +73,8 @@ public class AuthorServiceTest {
 
     @Test
     void updateAuthor_success() {
-        Author author = newAuthor();
-        Author updatedAuthor = newAuthor();
+        Author author = MockAuthor.newAuthor;
+        Author updatedAuthor = author;
         updatedAuthor.setFirstName("New first name");
         when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
         assertDoesNotThrow(() -> authorService.updateAuthor(updatedAuthor, author.getId()));
@@ -82,7 +83,7 @@ public class AuthorServiceTest {
 
     @Test
     void updateAuthor_notFound() {
-        Author updatedAuthor = newAuthor();
+        Author updatedAuthor = MockAuthor.newAuthor;
         updatedAuthor.setFirstName("New first name");
         when(authorRepository.findById(updatedAuthor.getId())).thenThrow(new AuthorNotFoundException(updatedAuthor.getId()));
         assertThrows(AuthorNotFoundException.class, () -> authorService.updateAuthor(updatedAuthor, updatedAuthor.getId()));
@@ -96,17 +97,9 @@ public class AuthorServiceTest {
 
     @Test
     public void deleteAuthor_success() {
-        Author author = newAuthor();
+        Author author = MockAuthor.newAuthor;
         when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
         doNothing().when(authorRepository).deleteById(author.getId());
         assertDoesNotThrow(() -> authorService.deleteAuthor(author.getId()));
-    }
-
-    private Author newAuthor() {
-        return Author.builder()
-                .id("id")
-                .firstName("Thomas")
-                .lastName("Daniel")
-                .build();
     }
 }

@@ -2,6 +2,7 @@ package com.mybooks.api.service;
 
 import com.mybooks.api.exception.BookNotFoundException;
 import com.mybooks.api.model.Book;
+import com.mybooks.api.model.MockBook;
 import com.mybooks.api.reposiotry.BookRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,12 +44,12 @@ public class BookServiceTest {
         Book book3 = new Book("Book3_id", "Title3", "author_id");
         List<Book> books = new ArrayList<>(Arrays.asList(book1, book2, book3));
         when(bookRepository.findAll()).thenReturn(books);
-        assertTrue(bookService.getAllBooks().size() == books.size());
+        assertEquals(bookService.getAllBooks().size(),  books.size());
     }
 
     @Test
     void getBookById_success() {
-        Book book = newBook();
+        Book book = MockBook.newBook;
         when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
         assertDoesNotThrow(() -> bookService.getBookById(book.getId()));
         Book createdBook = bookService.getBookById(book.getId());
@@ -65,7 +66,7 @@ public class BookServiceTest {
 
     @Test
     void createNewBook_success() {
-        Book book = newBook();
+        Book book = MockBook.newBook;
         when(bookRepository.save(book)).thenReturn(book);
         Book createdBook = bookService.createNewBook(book);
         assertEquals(createdBook.getTitle(), book.getTitle());
@@ -75,8 +76,8 @@ public class BookServiceTest {
 
     @Test
     void updateBook_success() {
-        Book book = newBook();
-        Book updatedBook = newBook();
+        Book book = MockBook.newBook;
+        Book updatedBook = book;
         updatedBook.setTitle("New Title");
         when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
         assertDoesNotThrow(() -> bookService.updateBook(updatedBook, book.getId()));
@@ -85,7 +86,7 @@ public class BookServiceTest {
 
     @Test
     void updateBook_notFound() {
-        Book updatedBook = newBook();
+        Book updatedBook = MockBook.newBook;
         updatedBook.setTitle("New Title");
         when(bookRepository.findById(updatedBook.getId())).thenThrow(new BookNotFoundException(updatedBook.getId()));
         assertThrows(BookNotFoundException.class, () -> bookService.updateBook(updatedBook, updatedBook.getId()));
@@ -99,17 +100,9 @@ public class BookServiceTest {
 
     @Test
     public void deleteBook_success() {
-        Book book = newBook();
+        Book book = MockBook.newBook;
         when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
         doNothing().when(bookRepository).deleteById(book.getId());
         assertDoesNotThrow(() -> bookService.deleteBook(book.getId()));
-    }
-
-    private Book newBook() {
-        return Book.builder()
-                .id("id")
-                .title("Book Title")
-                .authorId("author2_id")
-                .build();
     }
 }
