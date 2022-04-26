@@ -10,7 +10,7 @@ public interface AuthorService {
 
     Author getAuthorById(String id) throws AuthorNotFoundException;
 
-    Author createNewAuthor(Author author);
+    Author addAuthor(Author author);
 
     Author updateAuthor(Author updatedAuthor, String id) throws AuthorNotFoundException;
 

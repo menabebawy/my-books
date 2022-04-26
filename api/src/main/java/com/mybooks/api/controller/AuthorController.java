@@ -5,9 +5,9 @@ import com.mybooks.api.model.Author;
 import com.mybooks.api.service.AuthorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -28,12 +28,12 @@ public class AuthorController {
     }
 
     @PostMapping()
-    Author createNewAuthor(@RequestBody @Validated Author author) {
-        return authorService.createNewAuthor(author);
+    Author createNewAuthor(@Valid @RequestBody Author author) {
+        return authorService.addAuthor(author);
     }
 
     @PutMapping("/{id}")
-    Author updateAuthor(@RequestBody Author updatedAuthor, @PathVariable String id) throws AuthorNotFoundException {
+    Author updateAuthor(@RequestBody @Valid  Author updatedAuthor, @PathVariable String id) throws AuthorNotFoundException {
         return authorService.updateAuthor(updatedAuthor, id);
     }
 

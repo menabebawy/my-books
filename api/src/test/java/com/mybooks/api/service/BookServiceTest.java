@@ -1,8 +1,8 @@
 package com.mybooks.api.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mybooks.api.exception.BookNotFoundException;
 import com.mybooks.api.model.Book;
-import com.mybooks.api.model.MockBook;
 import com.mybooks.api.reposiotry.BookRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,10 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -48,8 +47,8 @@ public class BookServiceTest {
     }
 
     @Test
-    void getBookById_success() {
-        Book book = MockBook.newBook;
+    void getBookById_success() throws IOException {
+        Book book = getMockBook();
         when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
         assertDoesNotThrow(() -> bookService.getBookById(book.getId()));
         Book createdBook = bookService.getBookById(book.getId());
@@ -65,8 +64,8 @@ public class BookServiceTest {
     }
 
     @Test
-    void createNewBook_success() {
-        Book book = MockBook.newBook;
+    void createNewBook_success() throws IOException {
+        Book book = getMockBook();
         when(bookRepository.save(book)).thenReturn(book);
         Book createdBook = bookService.createNewBook(book);
         assertEquals(createdBook.getTitle(), book.getTitle());
@@ -75,9 +74,9 @@ public class BookServiceTest {
     }
 
     @Test
-    void updateBook_success() {
-        Book book = MockBook.newBook;
-        Book updatedBook = book;
+    void updateBook_success() throws IOException {
+        Book book = getMockBook();
+        Book updatedBook = getMockBook();
         updatedBook.setTitle("New Title");
         when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
         assertDoesNotThrow(() -> bookService.updateBook(updatedBook, book.getId()));
@@ -85,8 +84,8 @@ public class BookServiceTest {
     }
 
     @Test
-    void updateBook_notFound() {
-        Book updatedBook = MockBook.newBook;
+    void updateBook_notFound() throws IOException {
+        Book updatedBook = getMockBook();
         updatedBook.setTitle("New Title");
         when(bookRepository.findById(updatedBook.getId())).thenThrow(new BookNotFoundException(updatedBook.getId()));
         assertThrows(BookNotFoundException.class, () -> bookService.updateBook(updatedBook, updatedBook.getId()));
@@ -99,10 +98,16 @@ public class BookServiceTest {
     }
 
     @Test
-    public void deleteBook_success() {
-        Book book = MockBook.newBook;
+    public void deleteBook_success() throws IOException {
+        Book book = getMockBook();
         when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
         doNothing().when(bookRepository).deleteById(book.getId());
         assertDoesNotThrow(() -> bookService.deleteBook(book.getId()));
+    }
+
+    private Book getMockBook() throws IOException {
+        File file = new File(Objects.requireNonNull(this.getClass().getClassLoader().getResource("Book.json")).getFile());
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(file, Book.class);
     }
 }

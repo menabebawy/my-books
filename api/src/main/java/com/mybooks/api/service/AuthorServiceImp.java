@@ -24,7 +24,7 @@ public class AuthorServiceImp implements AuthorService {
     }
 
     @Override
-    public Author createNewAuthor(Author author) {
+    public Author addAuthor(Author author) {
         return authorRepository.save(author);
     }
 

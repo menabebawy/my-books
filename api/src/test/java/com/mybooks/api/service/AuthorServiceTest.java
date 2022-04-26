@@ -1,8 +1,8 @@
 package com.mybooks.api.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mybooks.api.exception.AuthorNotFoundException;
 import com.mybooks.api.model.Author;
-import com.mybooks.api.model.MockAuthor;
 import com.mybooks.api.reposiotry.AuthorRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,8 +47,8 @@ public class AuthorServiceTest {
     }
 
     @Test
-    void getAuthorById_success() {
-        Author author = MockAuthor.newAuthor;
+    void getAuthorById_success() throws IOException {
+        Author author = getMockAuthor();
         when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
         assertDoesNotThrow(() -> authorService.getAuthorById(author.getId()));
         Author createdAuthor = authorService.getAuthorById(author.getId());
@@ -62,19 +64,19 @@ public class AuthorServiceTest {
     }
 
     @Test
-    void createNewAuthor_success() {
-        Author author = MockAuthor.newAuthor;
+    void createNewAuthor_success() throws IOException {
+        Author author = getMockAuthor();
         when(authorRepository.save(author)).thenReturn(author);
-        Author createdAuthor = authorService.createNewAuthor(author);
+        Author createdAuthor = authorService.addAuthor(author);
         assertEquals(createdAuthor.getFirstName(), author.getFirstName());
         assertEquals(createdAuthor.getId(), author.getId());
         verify(authorRepository, times(1)).save(author);
     }
 
     @Test
-    void updateAuthor_success() {
-        Author author = MockAuthor.newAuthor;
-        Author updatedAuthor = author;
+    void updateAuthor_success() throws IOException {
+        Author author = getMockAuthor();
+        Author updatedAuthor = getMockAuthor();
         updatedAuthor.setFirstName("New first name");
         when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
         assertDoesNotThrow(() -> authorService.updateAuthor(updatedAuthor, author.getId()));
@@ -82,8 +84,8 @@ public class AuthorServiceTest {
     }
 
     @Test
-    void updateAuthor_notFound() {
-        Author updatedAuthor = MockAuthor.newAuthor;
+    void updateAuthor_notFound() throws IOException {
+        Author updatedAuthor = getMockAuthor();
         updatedAuthor.setFirstName("New first name");
         when(authorRepository.findById(updatedAuthor.getId())).thenThrow(new AuthorNotFoundException(updatedAuthor.getId()));
         assertThrows(AuthorNotFoundException.class, () -> authorService.updateAuthor(updatedAuthor, updatedAuthor.getId()));
@@ -96,10 +98,16 @@ public class AuthorServiceTest {
     }
 
     @Test
-    public void deleteAuthor_success() {
-        Author author = MockAuthor.newAuthor;
+    public void deleteAuthor_success() throws IOException {
+        Author author = getMockAuthor();
         when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
         doNothing().when(authorRepository).deleteById(author.getId());
         assertDoesNotThrow(() -> authorService.deleteAuthor(author.getId()));
+    }
+
+    private Author getMockAuthor() throws IOException {
+        File file = new File(Objects.requireNonNull(this.getClass().getClassLoader().getResource("Author.json")).getFile());
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(file, Author.class);
     }
 }

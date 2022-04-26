@@ -3,7 +3,6 @@ package com.mybooks.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mybooks.api.exception.AuthorNotFoundException;
 import com.mybooks.api.model.Author;
-import com.mybooks.api.model.MockAuthor;
 import com.mybooks.api.service.AuthorServiceImp;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -17,6 +16,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -87,17 +88,18 @@ public class AuthorControllerTest {
 
     @Test
     public void createNewAuthor_success() throws Exception {
-        when(authorService.createNewAuthor(any(Author.class))).thenReturn(MockAuthor.newAuthor);
+        Author author = getMockAuthor();
+        when(authorService.addAuthor(any(Author.class))).thenReturn(author);
 
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(this.mapper.writeValueAsString(MockAuthor.newAuthor));
+                .content(this.mapper.writeValueAsString(author));
 
         mockMvc.perform(mockHttpServletRequestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is(MockAuthor.newAuthor.getFirstName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.is(MockAuthor.newAuthor.getLastName())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is(author.getFirstName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.is(author.getLastName())));
     }
 
     @Test
@@ -122,7 +124,7 @@ public class AuthorControllerTest {
 
     @Test
     public void updateAuthor_notFound() throws Exception {
-        Author updatedAuthor = MockAuthor.newAuthor;
+        Author updatedAuthor = getMockAuthor();
         when(authorService.updateAuthor(any(Author.class), any(String.class))).thenThrow(new AuthorNotFoundException(notFoundAuthorId));
 
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders
@@ -160,5 +162,11 @@ public class AuthorControllerTest {
                         assertTrue(result.getResolvedException() instanceof AuthorNotFoundException))
                 .andExpect(result ->
                         assertEquals("Could not find author 51", Objects.requireNonNull(result.getResolvedException()).getMessage()));
+    }
+
+    private Author getMockAuthor() throws IOException {
+        File file = new File(Objects.requireNonNull(this.getClass().getClassLoader().getResource("Author.json")).getFile());
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(file, Author.class);
     }
 }
