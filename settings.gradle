@@ -1,3 +1,1 @@
-rootProject.name = 'my-books'
-include 'models'
-
+rootProject.name = 'BookStoreApplication'
