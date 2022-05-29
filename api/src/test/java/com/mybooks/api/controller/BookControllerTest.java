@@ -17,7 +17,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,26 +30,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(BookController.class)
 public class BookControllerTest {
-    @Autowired
-    MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper mapper;
-
-    @MockBean
-    BookService bookService;
-
     private final Book book1 = new Book("Book1_id", "Title1", "Author1_id");
     private final Book book2 = new Book("Book2_id", "Title2", "Author2_id");
     private final Book book3 = new Book("Book3_id", "Title3", "Author3_id");
-
     final private String baseUrl = "/book";
+    @Autowired
+    MockMvc mockMvc;
+    @Autowired
+    ObjectMapper mapper;
+    @MockBean
+    BookService bookService;
 
     @Test
     public void getAllBook_success() throws Exception {
         List<Book> books = new ArrayList<>(Arrays.asList(book1, book2, book3));
 
-       when(bookService.getAllBooks()).thenReturn(books);
+        when(bookService.getAllBooks()).thenReturn(books);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl)
@@ -62,8 +61,8 @@ public class BookControllerTest {
         when(bookService.getBookById(book1.getId())).thenReturn(book1);
 
         mockMvc.perform(MockMvcRequestBuilders
-                .get(baseUrl + "/" + book1.getId())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .get(baseUrl + "/" + book1.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title", Matchers.is(book1.getTitle())));

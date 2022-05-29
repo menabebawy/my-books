@@ -43,7 +43,7 @@ public class AuthorServiceImp implements AuthorService {
     @Override
     public void deleteAuthor(String id) throws AuthorNotFoundException {
         if (authorRepository.findById(id).isEmpty()) {
-            throw  new AuthorNotFoundException(id);
+            throw new AuthorNotFoundException(id);
         } else {
             authorRepository.deleteById(id);
         }

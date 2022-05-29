@@ -4,8 +4,8 @@ plugins {
     id 'java'
 }
 
-group = 'com.mybooks'
-version = '0.0.1-SNAPSHOT'
+group 'com.mybooks'
+version '0.0.1-SNAPSHOT'
 
 configurations {
     compileOnly {

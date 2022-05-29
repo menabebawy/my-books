@@ -18,7 +18,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,27 +31,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AuthorController.class)
 public class AuthorControllerTest {
+    final private String baseUrl = "/book/author";
+    final private String notFoundAuthorId = "51";
     @Autowired
     MockMvc mockMvc;
-
     @Autowired
     ObjectMapper mapper;
-
     @MockBean
     AuthorServiceImp authorService;
-
     Author author1 = new Author("Author1_id", "Sam", "Simon");
     Author author2 = new Author("Author2_id", "Adi", "John");
     Author author3 = new Author("Author3_id", "Dodo", "Adel");
-
-    final private String baseUrl = "/book/author";
-    final private String notFoundAuthorId = "51";
 
     @Test
     public void getAllAuthors_success() throws Exception {
         List<Author> authors = new ArrayList<>(Arrays.asList(author1, author2, author3));
 
-       when(authorService.getAllAuthors()).thenReturn(authors);
+        when(authorService.getAllAuthors()).thenReturn(authors);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl)
@@ -111,7 +110,7 @@ public class AuthorControllerTest {
                 .build();
         Mockito.when(authorService.updateAuthor(any(Author.class), any(String.class))).thenReturn(updatedAuthor1);
 
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(baseUrl + "/"+ author1.getId())
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(baseUrl + "/" + author1.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(updatedAuthor1));
 

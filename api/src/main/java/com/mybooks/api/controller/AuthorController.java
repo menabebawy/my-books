@@ -33,7 +33,7 @@ public class AuthorController {
     }
 
     @PutMapping("/{id}")
-    Author updateAuthor(@RequestBody @Valid  Author updatedAuthor, @PathVariable String id) throws AuthorNotFoundException {
+    Author updateAuthor(@RequestBody @Valid Author updatedAuthor, @PathVariable String id) throws AuthorNotFoundException {
         return authorService.updateAuthor(updatedAuthor, id);
     }
 

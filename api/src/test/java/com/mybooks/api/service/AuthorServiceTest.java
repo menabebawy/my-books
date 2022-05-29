@@ -19,12 +19,10 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class AuthorServiceTest {
+    private final String notFoundAuthorId = "51";
     @Mock
     AuthorRepository authorRepository;
-
     private AuthorService authorService;
-
-    private final String notFoundAuthorId = "51";
 
     @BeforeEach
     void setUp() {
@@ -32,7 +30,7 @@ public class AuthorServiceTest {
     }
 
     @AfterEach
-    void destroyAll(){
+    void destroyAll() {
         authorRepository.deleteAll();
     }
 

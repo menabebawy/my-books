@@ -19,12 +19,10 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class BookServiceTest {
+    private final String notFoundBookId = "51";
     @Mock
     BookRepository bookRepository;
-
     private BookService bookService;
-
-    private final String notFoundBookId = "51";
 
     @BeforeEach
     void setUp() {
@@ -32,7 +30,7 @@ public class BookServiceTest {
     }
 
     @AfterEach
-    void destroyAll(){
+    void destroyAll() {
         bookRepository.deleteAll();
     }
 
@@ -43,7 +41,7 @@ public class BookServiceTest {
         Book book3 = new Book("Book3_id", "Title3", "author_id");
         List<Book> books = new ArrayList<>(Arrays.asList(book1, book2, book3));
         when(bookRepository.findAll()).thenReturn(books);
-        assertEquals(bookService.getAllBooks().size(),  books.size());
+        assertEquals(bookService.getAllBooks().size(), books.size());
     }
 
     @Test
