@@ -1,8 +1,8 @@
 package com.mybooks.api.controller;
 
+import com.mybooks.api.service.AuthorService;
 import com.mybooks.api.exception.AuthorNotFoundException;
 import com.mybooks.api.model.Author;
-import com.mybooks.api.service.AuthorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+    id 'application'
+    id("com.github.johnrengelman.shadow") version "7.0.0"
+}
+
+group 'com.mybooks'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+application {
+    mainClass.set("com.mybooks.infrastructure.aws.AWSApp")
+}
+
+dependencies {
+    implementation 'software.amazon.awscdk:core:1.144.0'
+    implementation 'software.amazon.awscdk:dynamodb:1.83.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -5,7 +5,10 @@ import com.mybooks.api.exception.BookNotFoundException;
 import com.mybooks.api.model.Book;
 import com.mybooks.api.service.BookService;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -45,12 +48,12 @@ public class BookControllerTest {
     public void getAllBook_success() throws Exception {
         List<Book> books = new ArrayList<>(Arrays.asList(book1, book2, book3));
 
-        when(bookService.getAllBooks()).thenReturn(books);
+        Mockito.when(bookService.getAllBooks()).thenReturn(books);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(3)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].title", Matchers.is("Title3")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].authorId", Matchers.is("Author3_id")));
@@ -58,76 +61,76 @@ public class BookControllerTest {
 
     @Test
     public void getBookById_success() throws Exception {
-        when(bookService.getBookById(book1.getId())).thenReturn(book1);
+        Mockito.when(bookService.getBookById(book1.getId())).thenReturn(book1);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl + "/" + book1.getId())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title", Matchers.is(book1.getTitle())));
     }
 
-    @Test
-    public void createNewBook_success() throws Exception {
-        Book newBook = getMockBook();
+//    @Test
+//    public void createNewBook_success() throws Exception {
+//        Book newBook = getMockBook();
+//
+//        Mockito.when(bookService.createNewBook(ArgumentMatchers.any(Book.class))).thenReturn(newBook);
+//
+//        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(this.mapper.writeValueAsString(newBook));
+//
+//        mockMvc.perform(mockHttpServletRequestBuilder)
+//                .andExpect(MockMvcResultMatchers.status().isOk())
+//                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.title", Matchers.is(newBook.getTitle())))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.authorId", Matchers.is(newBook.getAuthorId())));
+//    }
 
-        when(bookService.createNewBook(any(Book.class))).thenReturn(newBook);
+//    @Test
+//    public void updateBook_success() throws Exception {
+//        Book updatedBook = getMockBook();
+//        updatedBook.setTitle("New Title");
+//
+//        Mockito.when(bookService.updateBook(ArgumentMatchers.any(Book.class), ArgumentMatchers.any(String.class))).thenReturn(updatedBook);
+//
+//        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(baseUrl + "/" + updatedBook.getId())
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(this.mapper.writeValueAsString(updatedBook));
+//
+//        mockMvc.perform(mockRequest)
+//                .andExpect(MockMvcResultMatchers.status().isOk())
+//                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.title", Matchers.is(updatedBook.getTitle())));
+//    }
 
-        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(this.mapper.writeValueAsString(newBook));
-
-        mockMvc.perform(mockHttpServletRequestBuilder)
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.title", Matchers.is(newBook.getTitle())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.authorId", Matchers.is(newBook.getAuthorId())));
-    }
-
-    @Test
-    public void updateBook_success() throws Exception {
-        Book updatedBook = getMockBook();
-        updatedBook.setTitle("New Title");
-
-        when(bookService.updateBook(any(Book.class), any(String.class))).thenReturn(updatedBook);
-
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(baseUrl + "/" + updatedBook.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(this.mapper.writeValueAsString(updatedBook));
-
-        mockMvc.perform(mockRequest)
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.title", Matchers.is(updatedBook.getTitle())));
-    }
-
-    @Test
-    public void updateBook_notFound() throws Exception {
-        when(bookService.updateBook(any(Book.class), any(String.class))).thenThrow(new BookNotFoundException("51"));
-
-        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders
-                .put(baseUrl + "/" + getMockBook().getId())
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(this.mapper.writeValueAsString(getMockBook()));
-
-        mockMvc.perform(mockHttpServletRequestBuilder)
-                .andExpect(status().isNotFound())
-                .andExpect(result ->
-                        assertTrue(result.getResolvedException() instanceof BookNotFoundException))
-                .andExpect(result ->
-                        assertEquals("Could not find book 51", Objects.requireNonNull(result.getResolvedException()).getMessage()));
-    }
+//    @Test
+//    public void updateBook_notFound() throws Exception {
+//        Mockito.when(bookService.updateBook(ArgumentMatchers.any(Book.class), ArgumentMatchers.any(String.class))).thenThrow(new BookNotFoundException("51"));
+//
+//        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders
+//                .put(baseUrl + "/" + getMockBook().getId())
+//                .contentType(MediaType.APPLICATION_JSON_VALUE)
+//                .accept(MediaType.APPLICATION_JSON)
+//                .content(this.mapper.writeValueAsString(getMockBook()));
+//
+//        mockMvc.perform(mockHttpServletRequestBuilder)
+//                .andExpect(MockMvcResultMatchers.status().isNotFound())
+//                .andExpect(result ->
+//                        assertTrue(result.getResolvedException() instanceof BookNotFoundException))
+//                .andExpect(result ->
+//                        Assertions.assertEquals("Could not find book 51", Objects.requireNonNull(result.getResolvedException()).getMessage()));
+//    }
 
     @Test
     public void deleteBookById_success() throws Exception {
-        doNothing().when(bookService).deleteBook(book1.getId());
+        Mockito.doNothing().when(bookService).deleteBook(book1.getId());
 
         mockMvc.perform(MockMvcRequestBuilders
                         .delete(baseUrl + "/" + book1.getId())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
@@ -137,11 +140,11 @@ public class BookControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                         .delete(baseUrl + "/51")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(result ->
                         assertTrue(result.getResolvedException() instanceof BookNotFoundException))
                 .andExpect(result ->
-                        assertEquals("Could not find book 51", Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                        Assertions.assertEquals("Could not find book 51", Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
     private Book getMockBook() throws IOException {
