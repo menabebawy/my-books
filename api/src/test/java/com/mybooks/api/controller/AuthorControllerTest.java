@@ -83,21 +83,21 @@ public class AuthorControllerTest {
                                 Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
-//    @Test
-//    public void createNewAuthor_success() throws Exception {
-//        Author author = getMockAuthor();
-//        Mockito.when(authorService.addAuthor(ArgumentMatchers.any(Author.class))).thenReturn(author);
-//
-//        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(this.mapper.writeValueAsString(author));
-//
-//        mockMvc.perform(mockHttpServletRequestBuilder)
-//                .andExpect(MockMvcResultMatchers.status().isOk())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is(author.getFirstName())))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.is(author.getLastName())));
-//    }
+    @Test
+    public void createNewAuthor_success() throws Exception {
+        Author author = getMockAuthor();
+        Mockito.when(authorService.addAuthor(ArgumentMatchers.any(Author.class))).thenReturn(author);
+
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsString(author));
+
+        mockMvc.perform(mockHttpServletRequestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is(author.getFirstName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.is(author.getLastName())));
+    }
 
     @Test
     public void updateAuthor_success() throws Exception {
@@ -119,23 +119,23 @@ public class AuthorControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.is(updatedAuthor1.getLastName())));
     }
 
-//    @Test
-//    public void updateAuthor_notFound() throws Exception {
-//        Author updatedAuthor = getMockAuthor();
-//        Mockito.when(authorService.updateAuthor(ArgumentMatchers.any(Author.class), ArgumentMatchers.any(String.class))).thenThrow(new AuthorNotFoundException(notFoundAuthorId));
-//
-//        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders
-//                .put(baseUrl + "/" + notFoundAuthorId)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content(this.mapper.writeValueAsString(updatedAuthor));
-//
-//        mockMvc.perform(mockHttpServletRequestBuilder)
-//                .andExpect(MockMvcResultMatchers.status().isNotFound())
-//                .andExpect(result -> assertTrue(result.getResolvedException() instanceof AuthorNotFoundException))
-//                .andExpect(result ->
-//                        Assertions.assertEquals("Could not find author 51",
-//                                Objects.requireNonNull(result.getResolvedException()).getMessage()));
-//    }
+    @Test
+    public void updateAuthor_notFound() throws Exception {
+        Author updatedAuthor = getMockAuthor();
+        Mockito.when(authorService.updateAuthor(ArgumentMatchers.any(Author.class), ArgumentMatchers.any(String.class))).thenThrow(new AuthorNotFoundException(notFoundAuthorId));
+
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders
+                .put(baseUrl + "/" + notFoundAuthorId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsString(updatedAuthor));
+
+        mockMvc.perform(mockHttpServletRequestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof AuthorNotFoundException))
+                .andExpect(result ->
+                        Assertions.assertEquals("Could not find author 51",
+                                Objects.requireNonNull(result.getResolvedException()).getMessage()));
+    }
 
     @Test
     public void deleteAuthorById_success() throws Exception {
