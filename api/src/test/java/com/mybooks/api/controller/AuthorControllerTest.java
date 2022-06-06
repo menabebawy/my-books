@@ -3,7 +3,7 @@ package com.mybooks.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mybooks.api.exception.AuthorNotFoundException;
 import com.mybooks.api.model.Author;
-import com.mybooks.api.service.AuthorServiceImp;
+import com.mybooks.api.service.AuthorServiceImpl;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,11 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthorController.class)
 public class AuthorControllerTest {
@@ -40,7 +36,7 @@ public class AuthorControllerTest {
     @Autowired
     ObjectMapper mapper;
     @MockBean
-    AuthorServiceImp authorService;
+    AuthorServiceImpl authorService;
     Author author1 = new Author("Author1_id", "Sam", "Simon");
     Author author2 = new Author("Author2_id", "Adi", "John");
     Author author3 = new Author("Author3_id", "Dodo", "Adel");

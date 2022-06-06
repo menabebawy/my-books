@@ -2,20 +2,22 @@ package com.mybooks.api.service;
 
 import com.mybooks.api.exception.AuthorNotFoundException;
 import com.mybooks.api.model.Author;
-import com.mybooks.api.reposiotry.AuthorRepository;
-import lombok.AllArgsConstructor;
+import com.mybooks.api.repository.AuthorRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@AllArgsConstructor
 @Service
-public class AuthorServiceImp implements AuthorService {
+public class AuthorServiceImpl implements AuthorService {
     private final AuthorRepository authorRepository;
+
+    public AuthorServiceImpl(AuthorRepository authorRepository) {
+        this.authorRepository = authorRepository;
+    }
 
     @Override
     public List<Author> getAllAuthors() {
-        return authorRepository.findAll();
+        return (List<Author>) authorRepository.findAll();
     }
 
     @Override

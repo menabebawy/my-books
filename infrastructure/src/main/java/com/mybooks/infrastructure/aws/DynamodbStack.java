@@ -3,7 +3,6 @@ package com.mybooks.infrastructure.aws;
 import org.jetbrains.annotations.Nullable;
 import software.amazon.awscdk.core.RemovalPolicy;
 import software.amazon.awscdk.core.Stack;
-import software.amazon.awscdk.core.StackProps;
 import software.amazon.awscdk.services.dynamodb.Attribute;
 import software.amazon.awscdk.services.dynamodb.AttributeType;
 import software.amazon.awscdk.services.dynamodb.BillingMode;
@@ -13,8 +12,8 @@ import software.constructs.Construct;
 public class DynamodbStack extends Stack {
     public DynamodbStack(@Nullable Construct scope, @Nullable String id) {
         super(scope, id);
-        createTable("book");
-        createTable("author");
+        createTable("Book");
+        createTable("Author");
     }
 
     private void createTable(String tableName) {
@@ -27,6 +26,6 @@ public class DynamodbStack extends Stack {
     }
 
     private Attribute getTablePk() {
-        return Attribute.builder().name("pk").type(AttributeType.STRING).build();
+        return Attribute.builder().name("id").type(AttributeType.STRING).build();
     }
 }

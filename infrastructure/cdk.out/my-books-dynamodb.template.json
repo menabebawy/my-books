@@ -1,51 +1,51 @@
 {
   "Resources": {
-    "bookF0785129": {
+    "BookBD4B9F77": {
       "Type": "AWS::DynamoDB::Table",
       "Properties": {
         "KeySchema": [
           {
-            "AttributeName": "pk",
+            "AttributeName": "id",
             "KeyType": "HASH"
           }
         ],
         "AttributeDefinitions": [
           {
-            "AttributeName": "pk",
+            "AttributeName": "id",
             "AttributeType": "S"
           }
         ],
         "BillingMode": "PAY_PER_REQUEST",
-        "TableName": "book"
+        "TableName": "Book"
       },
       "UpdateReplacePolicy": "Delete",
       "DeletionPolicy": "Delete",
       "Metadata": {
-        "aws:cdk:path": "my-books-dynamodb/book/Resource"
+        "aws:cdk:path": "my-books-dynamodb/Book/Resource"
       }
     },
-    "author555740DF": {
+    "Author98FBB781": {
       "Type": "AWS::DynamoDB::Table",
       "Properties": {
         "KeySchema": [
           {
-            "AttributeName": "pk",
+            "AttributeName": "id",
             "KeyType": "HASH"
           }
         ],
         "AttributeDefinitions": [
           {
-            "AttributeName": "pk",
+            "AttributeName": "id",
             "AttributeType": "S"
           }
         ],
         "BillingMode": "PAY_PER_REQUEST",
-        "TableName": "author"
+        "TableName": "Author"
       },
       "UpdateReplacePolicy": "Delete",
       "DeletionPolicy": "Delete",
       "Metadata": {
-        "aws:cdk:path": "my-books-dynamodb/author/Resource"
+        "aws:cdk:path": "my-books-dynamodb/Author/Resource"
       }
     },
     "CDKMetadata": {

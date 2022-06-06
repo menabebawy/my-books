@@ -2,20 +2,22 @@ package com.mybooks.api.service;
 
 import com.mybooks.api.exception.BookNotFoundException;
 import com.mybooks.api.model.Book;
-import com.mybooks.api.reposiotry.BookRepository;
-import lombok.AllArgsConstructor;
+import com.mybooks.api.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@AllArgsConstructor
 @Service
-public class BookServiceImp implements BookService {
+public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
+
+    public BookServiceImpl(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
 
     @Override
     public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+        return (List<Book>) bookRepository.findAll();
     }
 
     @Override
