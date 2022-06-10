@@ -3,11 +3,12 @@ package com.mybooks.api.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mybooks.api.exception.BookNotFoundException;
 import com.mybooks.api.model.Book;
-import com.mybooks.api.reposiotry.BookRepository;
+import com.mybooks.api.repository.BookRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
@@ -19,20 +20,18 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class BookServiceTest {
+    private final String notFoundBookId = "51";
     @Mock
     BookRepository bookRepository;
-
     private BookService bookService;
-
-    private final String notFoundBookId = "51";
 
     @BeforeEach
     void setUp() {
-        bookService = new BookServiceImp(bookRepository);
+        bookService = new BookServiceImpl(bookRepository);
     }
 
     @AfterEach
-    void destroyAll(){
+    void destroyAll() {
         bookRepository.deleteAll();
     }
 
@@ -43,7 +42,7 @@ public class BookServiceTest {
         Book book3 = new Book("Book3_id", "Title3", "author_id");
         List<Book> books = new ArrayList<>(Arrays.asList(book1, book2, book3));
         when(bookRepository.findAll()).thenReturn(books);
-        assertEquals(bookService.getAllBooks().size(),  books.size());
+        assertEquals(bookService.getAllBooks().size(), books.size());
     }
 
     @Test
@@ -60,7 +59,7 @@ public class BookServiceTest {
     void getBookById_notFound() {
         when(bookRepository.findById(notFoundBookId)).thenThrow(new BookNotFoundException(notFoundBookId));
         assertThrows(BookNotFoundException.class, () -> bookService.getBookById(notFoundBookId));
-        verify(bookRepository, times(1)).findById(notFoundBookId);
+        verify(bookRepository, Mockito.times(1)).findById(notFoundBookId);
     }
 
     @Test
@@ -70,7 +69,7 @@ public class BookServiceTest {
         Book createdBook = bookService.createNewBook(book);
         assertEquals(createdBook.getTitle(), book.getTitle());
         assertEquals(createdBook.getId(), book.getId());
-        verify(bookRepository, times(1)).save(book);
+        verify(bookRepository, Mockito.times(1)).save(book);
     }
 
     @Test
