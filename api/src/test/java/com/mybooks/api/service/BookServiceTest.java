@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class BookServiceTest {
@@ -41,14 +41,14 @@ public class BookServiceTest {
         Book book2 = new Book("Book2_id", "Title2", "author_id");
         Book book3 = new Book("Book3_id", "Title3", "author_id");
         List<Book> books = new ArrayList<>(Arrays.asList(book1, book2, book3));
-        Mockito.when(bookRepository.findAll()).thenReturn(books);
+        when(bookRepository.findAll()).thenReturn(books);
         assertEquals(bookService.getAllBooks().size(), books.size());
     }
 
     @Test
     void getBookById_success() throws IOException {
         Book book = getMockBook();
-        Mockito.when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
+        when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
         assertDoesNotThrow(() -> bookService.getBookById(book.getId()));
         Book createdBook = bookService.getBookById(book.getId());
         assertEquals(createdBook.getId(), book.getId());
@@ -57,19 +57,19 @@ public class BookServiceTest {
 
     @Test
     void getBookById_notFound() {
-        Mockito.when(bookRepository.findById(notFoundBookId)).thenThrow(new BookNotFoundException(notFoundBookId));
+        when(bookRepository.findById(notFoundBookId)).thenThrow(new BookNotFoundException(notFoundBookId));
         assertThrows(BookNotFoundException.class, () -> bookService.getBookById(notFoundBookId));
-        Mockito.verify(bookRepository, Mockito.times(1)).findById(notFoundBookId);
+        verify(bookRepository, Mockito.times(1)).findById(notFoundBookId);
     }
 
     @Test
     void createNewBook_success() throws IOException {
         Book book = getMockBook();
-        Mockito.when(bookRepository.save(book)).thenReturn(book);
+        when(bookRepository.save(book)).thenReturn(book);
         Book createdBook = bookService.createNewBook(book);
         assertEquals(createdBook.getTitle(), book.getTitle());
         assertEquals(createdBook.getId(), book.getId());
-        Mockito.verify(bookRepository, Mockito.times(1)).save(book);
+        verify(bookRepository, Mockito.times(1)).save(book);
     }
 
     @Test
@@ -77,7 +77,7 @@ public class BookServiceTest {
         Book book = getMockBook();
         Book updatedBook = getMockBook();
         updatedBook.setTitle("New Title");
-        Mockito.when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
+        when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
         assertDoesNotThrow(() -> bookService.updateBook(updatedBook, book.getId()));
         assertEquals(bookService.updateBook(updatedBook, book.getId()).getTitle(), updatedBook.getTitle());
     }
@@ -86,7 +86,7 @@ public class BookServiceTest {
     void updateBook_notFound() throws IOException {
         Book updatedBook = getMockBook();
         updatedBook.setTitle("New Title");
-        Mockito.when(bookRepository.findById(updatedBook.getId())).thenThrow(new BookNotFoundException(updatedBook.getId()));
+        when(bookRepository.findById(updatedBook.getId())).thenThrow(new BookNotFoundException(updatedBook.getId()));
         assertThrows(BookNotFoundException.class, () -> bookService.updateBook(updatedBook, updatedBook.getId()));
     }
 
@@ -99,8 +99,8 @@ public class BookServiceTest {
     @Test
     public void deleteBook_success() throws IOException {
         Book book = getMockBook();
-        Mockito.when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
-        Mockito.doNothing().when(bookRepository).deleteById(book.getId());
+        when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
+        doNothing().when(bookRepository).deleteById(book.getId());
         assertDoesNotThrow(() -> bookService.deleteBook(book.getId()));
     }
 

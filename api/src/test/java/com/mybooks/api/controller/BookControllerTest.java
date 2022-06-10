@@ -8,7 +8,6 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -26,7 +25,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 
 @WebMvcTest(BookController.class)
 public class BookControllerTest {
@@ -45,7 +44,7 @@ public class BookControllerTest {
     public void getAllBook_success() throws Exception {
         List<Book> books = new ArrayList<>(Arrays.asList(book1, book2, book3));
 
-        Mockito.when(bookService.getAllBooks()).thenReturn(books);
+        when(bookService.getAllBooks()).thenReturn(books);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl)
@@ -58,7 +57,7 @@ public class BookControllerTest {
 
     @Test
     public void getBookById_success() throws Exception {
-        Mockito.when(bookService.getBookById(book1.getId())).thenReturn(book1);
+        when(bookService.getBookById(book1.getId())).thenReturn(book1);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl + "/" + book1.getId())
@@ -72,7 +71,7 @@ public class BookControllerTest {
     public void createNewBook_success() throws Exception {
         Book newBook = getMockBook();
 
-        Mockito.when(bookService.createNewBook(ArgumentMatchers.any(Book.class))).thenReturn(newBook);
+        when(bookService.createNewBook(ArgumentMatchers.any(Book.class))).thenReturn(newBook);
 
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -90,7 +89,7 @@ public class BookControllerTest {
         Book updatedBook = getMockBook();
         updatedBook.setTitle("New Title");
 
-        Mockito.when(bookService.updateBook(ArgumentMatchers.any(Book.class), ArgumentMatchers.any(String.class))).thenReturn(updatedBook);
+        when(bookService.updateBook(ArgumentMatchers.any(Book.class), ArgumentMatchers.any(String.class))).thenReturn(updatedBook);
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(baseUrl + "/" + updatedBook.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -104,7 +103,7 @@ public class BookControllerTest {
 
     @Test
     public void updateBook_notFound() throws Exception {
-        Mockito.when(bookService.updateBook(ArgumentMatchers.any(Book.class), ArgumentMatchers.any(String.class))).thenThrow(new BookNotFoundException("51"));
+        when(bookService.updateBook(ArgumentMatchers.any(Book.class), ArgumentMatchers.any(String.class))).thenThrow(new BookNotFoundException("51"));
 
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders
                 .put(baseUrl + "/" + getMockBook().getId())
@@ -122,7 +121,7 @@ public class BookControllerTest {
 
     @Test
     public void deleteBookById_success() throws Exception {
-        Mockito.doNothing().when(bookService).deleteBook(book1.getId());
+        doNothing().when(bookService).deleteBook(book1.getId());
 
         mockMvc.perform(MockMvcRequestBuilders
                         .delete(baseUrl + "/" + book1.getId())

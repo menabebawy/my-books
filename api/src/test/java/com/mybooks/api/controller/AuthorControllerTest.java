@@ -8,7 +8,6 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -26,15 +25,18 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
 @WebMvcTest(AuthorController.class)
 public class AuthorControllerTest {
     final private String baseUrl = "/book/author";
     final private String notFoundAuthorId = "51";
+
     @Autowired
     MockMvc mockMvc;
     @Autowired
     ObjectMapper mapper;
+
     @MockBean
     AuthorServiceImpl authorService;
     Author author1 = new Author("Author1_id", "Sam", "Simon");
@@ -45,7 +47,7 @@ public class AuthorControllerTest {
     public void getAllAuthors_success() throws Exception {
         List<Author> authors = new ArrayList<>(Arrays.asList(author1, author2, author3));
 
-        Mockito.when(authorService.getAllAuthors()).thenReturn(authors);
+        when(authorService.getAllAuthors()).thenReturn(authors);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl)
@@ -58,7 +60,7 @@ public class AuthorControllerTest {
 
     @Test
     public void getAuthorById_success() throws Exception {
-        Mockito.when(authorService.getAuthorById(author1.getId())).thenReturn(author1);
+        when(authorService.getAuthorById(author1.getId())).thenReturn(author1);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl + "/" + author1.getId())
@@ -71,7 +73,7 @@ public class AuthorControllerTest {
 
     @Test
     public void getAuthorById_notFound() throws Exception {
-        Mockito.when(authorService.getAuthorById(notFoundAuthorId)).thenThrow(new AuthorNotFoundException(notFoundAuthorId));
+        when(authorService.getAuthorById(notFoundAuthorId)).thenThrow(new AuthorNotFoundException(notFoundAuthorId));
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl + "/" + notFoundAuthorId)
@@ -86,7 +88,7 @@ public class AuthorControllerTest {
     @Test
     public void createNewAuthor_success() throws Exception {
         Author author = getMockAuthor();
-        Mockito.when(authorService.addAuthor(ArgumentMatchers.any(Author.class))).thenReturn(author);
+        when(authorService.addAuthor(ArgumentMatchers.any(Author.class))).thenReturn(author);
 
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -106,7 +108,7 @@ public class AuthorControllerTest {
                 .firstName("Dark")
                 .lastName("Tim")
                 .build();
-        Mockito.when(authorService.updateAuthor(ArgumentMatchers.any(Author.class), ArgumentMatchers.any(String.class))).thenReturn(updatedAuthor1);
+        when(authorService.updateAuthor(ArgumentMatchers.any(Author.class), ArgumentMatchers.any(String.class))).thenReturn(updatedAuthor1);
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(baseUrl + "/" + author1.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -122,7 +124,7 @@ public class AuthorControllerTest {
     @Test
     public void updateAuthor_notFound() throws Exception {
         Author updatedAuthor = getMockAuthor();
-        Mockito.when(authorService.updateAuthor(ArgumentMatchers.any(Author.class), ArgumentMatchers.any(String.class))).thenThrow(new AuthorNotFoundException(notFoundAuthorId));
+        when(authorService.updateAuthor(ArgumentMatchers.any(Author.class), ArgumentMatchers.any(String.class))).thenThrow(new AuthorNotFoundException(notFoundAuthorId));
 
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders
                 .put(baseUrl + "/" + notFoundAuthorId)
@@ -139,7 +141,7 @@ public class AuthorControllerTest {
 
     @Test
     public void deleteAuthorById_success() throws Exception {
-        Mockito.doNothing().when(authorService).deleteAuthor(author1.getId());
+        doNothing().when(authorService).deleteAuthor(author1.getId());
 
         mockMvc.perform(MockMvcRequestBuilders
                         .delete(baseUrl + "/" + author1.getId())
@@ -149,7 +151,7 @@ public class AuthorControllerTest {
 
     @Test
     public void deleteAuthorById_notFound() throws Exception {
-        Mockito.doThrow(new AuthorNotFoundException("51")).when(authorService).deleteAuthor("51");
+        doThrow(new AuthorNotFoundException("51")).when(authorService).deleteAuthor("51");
 
         mockMvc.perform(MockMvcRequestBuilders
                         .delete(baseUrl + "/51")

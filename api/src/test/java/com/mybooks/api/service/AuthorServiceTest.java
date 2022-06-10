@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class AuthorServiceTest {
@@ -42,14 +42,14 @@ public class AuthorServiceTest {
         Author author2 = new Author("Author2_id", "Adi", "John");
         Author author3 = new Author("Author3_id", "Dodo", "Adel");
         List<Author> authors = new ArrayList<>(Arrays.asList(author1, author2, author3));
-        Mockito.when(authorRepository.findAll()).thenReturn(authors);
+        when(authorRepository.findAll()).thenReturn(authors);
         assertEquals(authorService.getAllAuthors().size(), authors.size());
     }
 
     @Test
     void getAuthorById_success() throws IOException {
         Author author = getMockAuthor();
-        Mockito.when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
+        when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
         Assertions.assertDoesNotThrow(() -> authorService.getAuthorById(author.getId()));
         Author createdAuthor = authorService.getAuthorById(author.getId());
         assertEquals(createdAuthor.getId(), author.getId());
@@ -58,19 +58,19 @@ public class AuthorServiceTest {
 
     @Test
     void getAuthorById_notFound() {
-        Mockito.when(authorRepository.findById(notFoundAuthorId)).thenThrow(new AuthorNotFoundException(notFoundAuthorId));
+        when(authorRepository.findById(notFoundAuthorId)).thenThrow(new AuthorNotFoundException(notFoundAuthorId));
         assertThrows(AuthorNotFoundException.class, () -> authorService.getAuthorById(notFoundAuthorId));
-        Mockito.verify(authorRepository, Mockito.times(1)).findById(notFoundAuthorId);
+        verify(authorRepository, Mockito.times(1)).findById(notFoundAuthorId);
     }
 
     @Test
     void createNewAuthor_success() throws IOException {
         Author author = getMockAuthor();
-        Mockito.when(authorRepository.save(author)).thenReturn(author);
+        when(authorRepository.save(author)).thenReturn(author);
         Author createdAuthor = authorService.addAuthor(author);
         assertEquals(createdAuthor.getFirstName(), author.getFirstName());
         assertEquals(createdAuthor.getId(), author.getId());
-        Mockito.verify(authorRepository, Mockito.times(1)).save(author);
+        verify(authorRepository, Mockito.times(1)).save(author);
     }
 
     @Test
@@ -78,7 +78,7 @@ public class AuthorServiceTest {
         Author author = getMockAuthor();
         Author updatedAuthor = getMockAuthor();
         updatedAuthor.setFirstName("New first name");
-        Mockito.when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
+        when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
         Assertions.assertDoesNotThrow(() -> authorService.updateAuthor(updatedAuthor, author.getId()));
         assertEquals(authorService.updateAuthor(updatedAuthor, author.getId()).getFirstName(), updatedAuthor.getFirstName());
     }
@@ -87,7 +87,7 @@ public class AuthorServiceTest {
     void updateAuthor_notFound() throws IOException {
         Author updatedAuthor = getMockAuthor();
         updatedAuthor.setFirstName("New first name");
-        Mockito.when(authorRepository.findById(updatedAuthor.getId())).thenThrow(new AuthorNotFoundException(updatedAuthor.getId()));
+        when(authorRepository.findById(updatedAuthor.getId())).thenThrow(new AuthorNotFoundException(updatedAuthor.getId()));
         assertThrows(AuthorNotFoundException.class, () -> authorService.updateAuthor(updatedAuthor, updatedAuthor.getId()));
     }
 
@@ -100,8 +100,8 @@ public class AuthorServiceTest {
     @Test
     public void deleteAuthor_success() throws IOException {
         Author author = getMockAuthor();
-        Mockito.when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
-        Mockito.doNothing().when(authorRepository).deleteById(author.getId());
+        when(authorRepository.findById(author.getId())).thenReturn(Optional.of(author));
+        doNothing().when(authorRepository).deleteById(author.getId());
         assertDoesNotThrow(() -> authorService.deleteAuthor(author.getId()));
     }
 
