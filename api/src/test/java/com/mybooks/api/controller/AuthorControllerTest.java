@@ -94,7 +94,7 @@ public class AuthorControllerTest {
     }
 
     @Test
-    public void createNewAuthor_success() throws Exception {
+    public void addNewAuthor_success() throws Exception {
         Author author = getMockAuthor();
         when(authorService.save(ArgumentMatchers.any(AuthorDTO.class))).thenReturn(authorMapper.transformToAuthorDTO(author));
 

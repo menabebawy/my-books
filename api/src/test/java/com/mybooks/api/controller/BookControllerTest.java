@@ -79,10 +79,28 @@ public class BookControllerTest {
     }
 
     @Test
-    public void createNewBook_success() throws Exception {
+    public void addNewBook_success() throws Exception {
         Book newBook = getMockBook();
 
         when(bookService.save(ArgumentMatchers.any(BookDTO.class))).thenReturn(bookMapper.transformToBookDTO(newBook));
+
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsString(newBook));
+
+        mockMvc.perform(mockHttpServletRequestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title", Matchers.is(newBook.getTitle())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.authorId", Matchers.is(newBook.getAuthorId())));
+    }
+
+    @Test
+    public void givenBookWithEmptyTitle_whenPost_thenErrorMessage() throws Exception {
+        Book newBook = getMockBook();
+        newBook.setTitle("");
+
+//        when(bookService.save(ArgumentMatchers.any(BookDTO.class))).thenReturn(bookMapper.transformToBookDTO(newBook));
 
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
                 .contentType(MediaType.APPLICATION_JSON)

@@ -1,7 +1,7 @@
 # AWS properties
 aws:
-  access-key: AKIA5PACSSIXGBBVJ2IS
-  secret-key: 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
+  access-key: 33
+  secret-key: 33
   region: us-east-1
   endpoint: dynamodb.us-east-1.amazonaws.com
 
