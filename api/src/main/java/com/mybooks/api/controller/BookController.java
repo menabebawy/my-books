@@ -1,9 +1,12 @@
 package com.mybooks.api.controller;
 
+import com.mybooks.api.dto.BookDTO;
 import com.mybooks.api.exception.BookNotFoundException;
 import com.mybooks.api.model.Book;
 import com.mybooks.api.service.BookService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,27 +23,28 @@ public class BookController {
     }
 
     @GetMapping()
-    List<Book> getAllBooks() {
-        return bookService.getAllBooks();
+    ResponseEntity<List<BookDTO>> getAllBooks() {
+        return new ResponseEntity<>(bookService.fetchAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    Book getBookById(@PathVariable String id) throws BookNotFoundException {
-        return bookService.getBookById(id);
+    ResponseEntity<BookDTO> getBookById(@PathVariable String id) throws BookNotFoundException {
+        return new ResponseEntity<>(bookService.fetchById(id), HttpStatus.OK);
     }
 
     @PostMapping()
-    Book createNewBook(@RequestBody @Validated Book book) {
-        return bookService.createNewBook(book);
+    ResponseEntity<BookDTO> createNewBook(@RequestBody @Validated BookDTO book) {
+        return new ResponseEntity<>(bookService.save(book), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    Book updateBook(@RequestBody Book updatedBook, @PathVariable String id) throws BookNotFoundException {
-        return bookService.updateBook(updatedBook, id);
+    ResponseEntity<BookDTO> updateBook(@RequestBody BookDTO updatedBookDTO, @PathVariable String id) throws BookNotFoundException {
+        return new ResponseEntity<>(bookService.update(updatedBookDTO, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    void deleteBook(@PathVariable String id) throws BookNotFoundException {
+    ResponseEntity deleteBook(@PathVariable String id) throws BookNotFoundException {
         bookService.deleteBook(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

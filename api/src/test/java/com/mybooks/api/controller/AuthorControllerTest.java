@@ -1,11 +1,14 @@
 package com.mybooks.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mybooks.api.dto.AuthorDTO;
 import com.mybooks.api.exception.AuthorNotFoundException;
+import com.mybooks.api.mapper.AuthorMapper;
+import com.mybooks.api.mapper.AuthorMapperImpl;
 import com.mybooks.api.model.Author;
 import com.mybooks.api.service.AuthorServiceImpl;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -31,23 +35,27 @@ import static org.mockito.Mockito.*;
 public class AuthorControllerTest {
     final private String baseUrl = "/book/author";
     final private String notFoundAuthorId = "51";
-
     @Autowired
     MockMvc mockMvc;
     @Autowired
     ObjectMapper mapper;
-
     @MockBean
     AuthorServiceImpl authorService;
-    Author author1 = new Author("Author1_id", "Sam", "Simon");
-    Author author2 = new Author("Author2_id", "Adi", "John");
-    Author author3 = new Author("Author3_id", "Dodo", "Adel");
+    AuthorDTO author1 = AuthorDTO.builder().id("Author1_id").firstName("Sam").lastName("Simon").build();
+    AuthorDTO author2 = AuthorDTO.builder().id("Author2_id").firstName("Adi").lastName("John").build();
+    AuthorDTO author3 = AuthorDTO.builder().id("Author3_id").firstName("Dodo").lastName("Adel").build();
+    private AuthorMapper authorMapper;
+
+    @BeforeEach
+    void setUp() {
+        authorMapper = new AuthorMapperImpl();
+    }
 
     @Test
     public void getAllAuthors_success() throws Exception {
-        List<Author> authors = new ArrayList<>(Arrays.asList(author1, author2, author3));
+        List<AuthorDTO> authors = new ArrayList<>(Arrays.asList(author1, author2, author3));
 
-        when(authorService.getAllAuthors()).thenReturn(authors);
+        when(authorService.fetchAll()).thenReturn(authors);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl)
@@ -60,7 +68,7 @@ public class AuthorControllerTest {
 
     @Test
     public void getAuthorById_success() throws Exception {
-        when(authorService.getAuthorById(author1.getId())).thenReturn(author1);
+        when(authorService.fetchById(author1.getId())).thenReturn(author1);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl + "/" + author1.getId())
@@ -73,7 +81,7 @@ public class AuthorControllerTest {
 
     @Test
     public void getAuthorById_notFound() throws Exception {
-        when(authorService.getAuthorById(notFoundAuthorId)).thenThrow(new AuthorNotFoundException(notFoundAuthorId));
+        when(authorService.fetchById(notFoundAuthorId)).thenThrow(new AuthorNotFoundException(notFoundAuthorId));
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl + "/" + notFoundAuthorId)
@@ -81,21 +89,21 @@ public class AuthorControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof AuthorNotFoundException))
                 .andExpect(result ->
-                        Assertions.assertEquals("Could not find author " + notFoundAuthorId,
+                        assertEquals("Could not find author " + notFoundAuthorId,
                                 Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
     @Test
     public void createNewAuthor_success() throws Exception {
         Author author = getMockAuthor();
-        when(authorService.addAuthor(ArgumentMatchers.any(Author.class))).thenReturn(author);
+        when(authorService.save(ArgumentMatchers.any(AuthorDTO.class))).thenReturn(authorMapper.transformToAuthorDTO(author));
 
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(author));
 
         mockMvc.perform(mockHttpServletRequestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is(author.getFirstName())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.is(author.getLastName())));
@@ -103,12 +111,12 @@ public class AuthorControllerTest {
 
     @Test
     public void updateAuthor_success() throws Exception {
-        Author updatedAuthor1 = Author.builder()
+        AuthorDTO updatedAuthor1 = AuthorDTO.builder()
                 .id(author1.getId())
                 .firstName("Dark")
                 .lastName("Tim")
                 .build();
-        when(authorService.updateAuthor(ArgumentMatchers.any(Author.class), ArgumentMatchers.any(String.class))).thenReturn(updatedAuthor1);
+        when(authorService.update(ArgumentMatchers.any(AuthorDTO.class), ArgumentMatchers.any(String.class))).thenReturn(updatedAuthor1);
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(baseUrl + "/" + author1.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -124,7 +132,7 @@ public class AuthorControllerTest {
     @Test
     public void updateAuthor_notFound() throws Exception {
         Author updatedAuthor = getMockAuthor();
-        when(authorService.updateAuthor(ArgumentMatchers.any(Author.class), ArgumentMatchers.any(String.class))).thenThrow(new AuthorNotFoundException(notFoundAuthorId));
+        when(authorService.update(ArgumentMatchers.any(AuthorDTO.class), ArgumentMatchers.any(String.class))).thenThrow(new AuthorNotFoundException(notFoundAuthorId));
 
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders
                 .put(baseUrl + "/" + notFoundAuthorId)
@@ -135,7 +143,7 @@ public class AuthorControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof AuthorNotFoundException))
                 .andExpect(result ->
-                        Assertions.assertEquals("Could not find author 51",
+                        assertEquals("Could not find author 51",
                                 Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
@@ -146,7 +154,7 @@ public class AuthorControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                         .delete(baseUrl + "/" + author1.getId())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
     @Test
@@ -160,7 +168,7 @@ public class AuthorControllerTest {
                 .andExpect(result ->
                         assertTrue(result.getResolvedException() instanceof AuthorNotFoundException))
                 .andExpect(result ->
-                        Assertions.assertEquals("Could not find author 51", Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                        assertEquals("Could not find author 51", Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
     private Author getMockAuthor() throws IOException {

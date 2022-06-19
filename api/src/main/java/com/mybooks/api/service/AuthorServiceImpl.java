@@ -1,53 +1,65 @@
 package com.mybooks.api.service;
 
+import com.mybooks.api.dto.AuthorDTO;
 import com.mybooks.api.exception.AuthorNotFoundException;
-import com.mybooks.api.model.Author;
+import com.mybooks.api.mapper.AuthorMapper;
 import com.mybooks.api.repository.AuthorRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
     private final AuthorRepository authorRepository;
+    private final AuthorMapper authorMapper;
 
-    public AuthorServiceImpl(AuthorRepository authorRepository) {
+    public AuthorServiceImpl(AuthorRepository authorRepository, AuthorMapper authorMapper) {
         this.authorRepository = authorRepository;
+        this.authorMapper = authorMapper;
     }
 
     @Override
-    public List<Author> getAllAuthors() {
-        return (List<Author>) authorRepository.findAll();
+    public List<AuthorDTO> fetchAll() {
+        return StreamSupport.stream(authorRepository.findAll().spliterator(), false)
+                .map(authorMapper::transformToAuthorDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Author getAuthorById(String id) throws AuthorNotFoundException {
-        return authorRepository.findById(id).orElseThrow(() -> new AuthorNotFoundException(id));
+    public AuthorDTO fetchById(String id) throws AuthorNotFoundException {
+        return authorRepository.findById(id)
+                .map(authorMapper::transformToAuthorDTO)
+                .orElseThrow(() -> new AuthorNotFoundException(id));
     }
 
     @Override
-    public Author addAuthor(Author author) {
-        return authorRepository.save(author);
+    public AuthorDTO save(AuthorDTO authorDTO) {
+        return Optional.of(authorDTO)
+                .map(authorMapper::transformToAuthor)
+                .map(authorRepository::save)
+                .map(authorMapper::transformToAuthorDTO)
+                .orElseThrow();
     }
 
     @Override
-    public Author updateAuthor(Author updatedAuthor, String id) throws AuthorNotFoundException {
-        if (getAuthorById(id) != null) {
-            Author author = getAuthorById(id);
-            author.setFirstName(updatedAuthor.getFirstName());
-            author.setLastName(updatedAuthor.getLastName());
-            return author;
-        } else {
-            throw new AuthorNotFoundException(id);
-        }
+    public AuthorDTO update(AuthorDTO updatedAuthorDTO, String id) throws AuthorNotFoundException {
+        return authorRepository.findById(id)
+                .map(author -> {
+                    author.setFirstName(updatedAuthorDTO.getFirstName());
+                    author.setLastName(updatedAuthorDTO.getLastName());
+                    return author;
+                })
+                .map(authorRepository::save)
+                .map(authorMapper::transformToAuthorDTO)
+                .orElseThrow(() -> new AuthorNotFoundException(id));
     }
 
     @Override
     public void deleteAuthor(String id) throws AuthorNotFoundException {
-        if (authorRepository.findById(id).isEmpty()) {
-            throw new AuthorNotFoundException(id);
-        } else {
-            authorRepository.deleteById(id);
-        }
+        fetchById(id);
+        authorRepository.deleteById(id);
     }
 }

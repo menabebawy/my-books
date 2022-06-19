@@ -1,9 +1,12 @@
 package com.mybooks.api.controller;
 
+import com.mybooks.api.dto.AuthorDTO;
 import com.mybooks.api.exception.AuthorNotFoundException;
 import com.mybooks.api.model.Author;
 import com.mybooks.api.service.AuthorService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,27 +23,28 @@ public class AuthorController {
     }
 
     @GetMapping()
-    List<Author> getAllAuthors() {
-        return authorService.getAllAuthors();
+    ResponseEntity<List<AuthorDTO>> getAllAuthors() {
+        return new ResponseEntity<>(authorService.fetchAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    Author getAuthorById(@PathVariable String id) throws AuthorNotFoundException {
-        return authorService.getAuthorById(id);
+    ResponseEntity<AuthorDTO> getAuthorById(@PathVariable String id) throws AuthorNotFoundException {
+        return new ResponseEntity<>(authorService.fetchById(id), HttpStatus.OK);
     }
 
     @PostMapping()
-    Author createNewAuthor(@Valid @RequestBody Author author) {
-        return authorService.addAuthor(author);
+    ResponseEntity<AuthorDTO> addAuthor(@Valid @RequestBody AuthorDTO authorDTO) {
+        return new ResponseEntity<>(authorService.save(authorDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    Author updateAuthor(@RequestBody @Valid Author updatedAuthor, @PathVariable String id) throws AuthorNotFoundException {
-        return authorService.updateAuthor(updatedAuthor, id);
+    ResponseEntity<AuthorDTO> updateAuthor(@RequestBody @Valid AuthorDTO updatedAuthorDTO, @PathVariable String id) throws AuthorNotFoundException {
+        return new ResponseEntity<>(authorService.update(updatedAuthorDTO, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    void deleteAuthor(@PathVariable String id) throws AuthorNotFoundException {
+    ResponseEntity deleteAuthor(@PathVariable String id) throws AuthorNotFoundException {
         authorService.deleteAuthor(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

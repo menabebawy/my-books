@@ -1,11 +1,14 @@
 package com.mybooks.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mybooks.api.dto.BookDTO;
 import com.mybooks.api.exception.BookNotFoundException;
+import com.mybooks.api.mapper.BookMapper;
+import com.mybooks.api.mapper.BookMapperImpl;
 import com.mybooks.api.model.Book;
 import com.mybooks.api.service.BookService;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +27,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @WebMvcTest(BookController.class)
 public class BookControllerTest {
-    private final Book book1 = new Book("Book1_id", "Title1", "Author1_id");
-    private final Book book2 = new Book("Book2_id", "Title2", "Author2_id");
-    private final Book book3 = new Book("Book3_id", "Title3", "Author3_id");
+    private final BookDTO book1 = BookDTO.builder().id("Book1_id").title("Title1").authorId("Author1_id").build();
+    private final BookDTO book2 = BookDTO.builder().id("Book2_id").title("Title2").authorId("Author2_id").build();
+    private final BookDTO book3 = BookDTO.builder().id("Book3_id").title("Title3").authorId("Author3_id").build();
+
     final private String baseUrl = "/book";
     @Autowired
     MockMvc mockMvc;
@@ -39,12 +44,18 @@ public class BookControllerTest {
     ObjectMapper mapper;
     @MockBean
     BookService bookService;
+    private BookMapper bookMapper;
+
+    @BeforeEach
+    void setUp() {
+        bookMapper = new BookMapperImpl();
+    }
 
     @Test
     public void getAllBook_success() throws Exception {
-        List<Book> books = new ArrayList<>(Arrays.asList(book1, book2, book3));
+        List<BookDTO> books = new ArrayList<>(Arrays.asList(book1, book2, book3));
 
-        when(bookService.getAllBooks()).thenReturn(books);
+        when(bookService.fetchAll()).thenReturn(books);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl)
@@ -57,7 +68,7 @@ public class BookControllerTest {
 
     @Test
     public void getBookById_success() throws Exception {
-        when(bookService.getBookById(book1.getId())).thenReturn(book1);
+        when(bookService.fetchById(book1.getId())).thenReturn(book1);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl + "/" + book1.getId())
@@ -71,14 +82,14 @@ public class BookControllerTest {
     public void createNewBook_success() throws Exception {
         Book newBook = getMockBook();
 
-        when(bookService.createNewBook(ArgumentMatchers.any(Book.class))).thenReturn(newBook);
+        when(bookService.save(ArgumentMatchers.any(BookDTO.class))).thenReturn(bookMapper.transformToBookDTO(newBook));
 
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(newBook));
 
         mockMvc.perform(mockHttpServletRequestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title", Matchers.is(newBook.getTitle())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.authorId", Matchers.is(newBook.getAuthorId())));
@@ -86,10 +97,13 @@ public class BookControllerTest {
 
     @Test
     public void updateBook_success() throws Exception {
-        Book updatedBook = getMockBook();
-        updatedBook.setTitle("New Title");
+        BookDTO updatedBook = BookDTO.builder()
+                .id(getMockBook().getId())
+                .title("New Title")
+                .authorId(getMockBook().getAuthorId())
+                .build();
 
-        when(bookService.updateBook(ArgumentMatchers.any(Book.class), ArgumentMatchers.any(String.class))).thenReturn(updatedBook);
+        when(bookService.update(ArgumentMatchers.any(BookDTO.class), ArgumentMatchers.any(String.class))).thenReturn(updatedBook);
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(baseUrl + "/" + updatedBook.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -103,7 +117,7 @@ public class BookControllerTest {
 
     @Test
     public void updateBook_notFound() throws Exception {
-        when(bookService.updateBook(ArgumentMatchers.any(Book.class), ArgumentMatchers.any(String.class))).thenThrow(new BookNotFoundException("51"));
+        when(bookService.update(ArgumentMatchers.any(BookDTO.class), ArgumentMatchers.any(String.class))).thenThrow(new BookNotFoundException("51"));
 
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders
                 .put(baseUrl + "/" + getMockBook().getId())
@@ -116,7 +130,7 @@ public class BookControllerTest {
                 .andExpect(result ->
                         assertTrue(result.getResolvedException() instanceof BookNotFoundException))
                 .andExpect(result ->
-                        Assertions.assertEquals("Could not find book 51", Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                        assertEquals("Could not find book 51", Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
     @Test
@@ -126,7 +140,7 @@ public class BookControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                         .delete(baseUrl + "/" + book1.getId())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
     @Test
@@ -140,7 +154,7 @@ public class BookControllerTest {
                 .andExpect(result ->
                         assertTrue(result.getResolvedException() instanceof BookNotFoundException))
                 .andExpect(result ->
-                        Assertions.assertEquals("Could not find book 51", Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                        assertEquals("Could not find book 51", Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
     private Book getMockBook() throws IOException {
