@@ -2,7 +2,6 @@ package com.mybooks.api.controller;
 
 import com.mybooks.api.dto.AuthorDTO;
 import com.mybooks.api.exception.AuthorNotFoundException;
-import com.mybooks.api.model.Author;
 import com.mybooks.api.service.AuthorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -38,7 +37,7 @@ public class AuthorController {
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<AuthorDTO> updateAuthor(@RequestBody @Valid AuthorDTO updatedAuthorDTO, @PathVariable String id) throws AuthorNotFoundException {
+    ResponseEntity<AuthorDTO> updateAuthor(@Valid @RequestBody AuthorDTO updatedAuthorDTO, @Valid @PathVariable String id) throws AuthorNotFoundException {
         return new ResponseEntity<>(authorService.update(updatedAuthorDTO, id), HttpStatus.OK);
     }
 

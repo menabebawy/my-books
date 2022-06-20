@@ -80,17 +80,15 @@ public class AuthorControllerTest {
     }
 
     @Test
-    public void getAuthorById_notFound() throws Exception {
+    public void whenGetAuthorRequestByNotFoundId_thenCorrectResponse() throws Exception {
         when(authorService.fetchById(notFoundAuthorId)).thenThrow(new AuthorNotFoundException(notFoundAuthorId));
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl + "/" + notFoundAuthorId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof AuthorNotFoundException))
-                .andExpect(result ->
-                        assertEquals("Could not find author " + notFoundAuthorId,
-                                Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("Could not find author " + notFoundAuthorId)));
     }
 
     @Test
@@ -107,6 +105,36 @@ public class AuthorControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is(author.getFirstName())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.is(author.getLastName())));
+    }
+
+    @Test
+    public void whenPostRequestToAuthorAndInValidAuthorFirstName_thenCorrectResponse() throws Exception {
+        Author author = getMockAuthor();
+        author.setFirstName(null);
+
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsString(author));
+
+        mockMvc.perform(mockHttpServletRequestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("firstName is required")));
+    }
+
+    @Test
+    public void whenPostRequestToAuthorAndInValidAuthorLastName_thenCorrectResponse() throws Exception {
+        Author author = getMockAuthor();
+        author.setLastName(null);
+
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsString(author));
+
+        mockMvc.perform(mockHttpServletRequestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("lastName is required")));
     }
 
     @Test
@@ -145,6 +173,42 @@ public class AuthorControllerTest {
                 .andExpect(result ->
                         assertEquals("Could not find author 51",
                                 Objects.requireNonNull(result.getResolvedException()).getMessage()));
+    }
+
+    @Test
+    public void whenPutRequestToAuthorAndInvalidAuthorFirstName_thenCorrectResponse() throws Exception {
+        AuthorDTO updatedAuthor = AuthorDTO.builder()
+                .id(author1.getId())
+                .firstName(null)
+                .lastName("Tim")
+                .build();
+
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(baseUrl + "/" + updatedAuthor.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsString(updatedAuthor));
+
+        mockMvc.perform(mockRequest)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("firstName is required")));
+    }
+
+    @Test
+    public void whenPutRequestToAuthorAndInvalidAuthorLastName_thenCorrectResponse() throws Exception {
+        AuthorDTO updatedAuthor = AuthorDTO.builder()
+                .id(author1.getId())
+                .firstName("Tim")
+                .lastName(null)
+                .build();
+
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(baseUrl + "/" + updatedAuthor.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsString(updatedAuthor));
+
+        mockMvc.perform(mockRequest)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("lastName is required")));
     }
 
     @Test

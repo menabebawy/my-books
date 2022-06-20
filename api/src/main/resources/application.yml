@@ -1,9 +1,36 @@
-# AWS properties
-aws:
-  access-key: 33
-  secret-key: 33
-  region: us-east-1
-  endpoint: dynamodb.us-east-1.amazonaws.com
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+app:
+  environment: development
+
+server:
+  port: 8081
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+app:
+  environment: production
+
+server:
+  port: 8081
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test
+
+app:
+  environment: testing
 
 server:
   port: 8081

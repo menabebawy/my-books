@@ -79,6 +79,18 @@ public class BookControllerTest {
     }
 
     @Test
+    public void whenGetBookRequestByNotFoundId_thenCorrectResponse() throws Exception {
+        when(bookService.fetchById(book1.getId())).thenThrow(new BookNotFoundException(book1.getId()));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get(baseUrl + "/" + book1.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("Could not find book " + book1.getId())));
+    }
+
+    @Test
     public void addNewBook_success() throws Exception {
         Book newBook = getMockBook();
 
@@ -96,21 +108,31 @@ public class BookControllerTest {
     }
 
     @Test
-    public void givenBookWithEmptyTitle_whenPost_thenErrorMessage() throws Exception {
+    public void whenPostRequestToBookAndInValidBookTitle_thenCorrectResponse() throws Exception {
         Book newBook = getMockBook();
-        newBook.setTitle("");
-
-//        when(bookService.save(ArgumentMatchers.any(BookDTO.class))).thenReturn(bookMapper.transformToBookDTO(newBook));
+        newBook.setTitle(null);
 
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(newBook));
 
         mockMvc.perform(mockHttpServletRequestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.title", Matchers.is(newBook.getTitle())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.authorId", Matchers.is(newBook.getAuthorId())));
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("title is required")));
+    }
+
+    @Test
+    public void whenPostRequestToBookAndInValidBookAuthorId_thenCorrectResponse() throws Exception {
+        Book newBook = getMockBook();
+        newBook.setAuthorId(null);
+
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsString(newBook));
+
+        mockMvc.perform(mockHttpServletRequestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("authorId is required")));
     }
 
     @Test
@@ -131,6 +153,42 @@ public class BookControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title", Matchers.is(updatedBook.getTitle())));
+    }
+
+    @Test
+    public void whenPutRequestToBookAndInvalidBookTitle_thenCorrectResponse() throws Exception {
+        BookDTO updatedBook = BookDTO.builder()
+                .id(getMockBook().getId())
+                .title("")
+                .authorId(getMockBook().getAuthorId())
+                .build();
+
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(baseUrl + "/" + updatedBook.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsString(updatedBook));
+
+        mockMvc.perform(mockRequest)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("title is required")));
+    }
+
+    @Test
+    public void whenPutRequestToBookAndInvalidBookAuthorId_thenCorrectResponse() throws Exception {
+        BookDTO updatedBook = BookDTO.builder()
+                .id(getMockBook().getId())
+                .title(getMockBook().getTitle())
+                .authorId(null)
+                .build();
+
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(baseUrl + "/" + updatedBook.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsString(updatedBook));
+
+        mockMvc.perform(mockRequest)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("authorId is required")));
     }
 
     @Test
