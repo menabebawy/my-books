@@ -1,35 +1,37 @@
 package com.mybooks.api.controller;
 
+import com.mybooks.api.exception.AuthorNotFoundException;
 import com.mybooks.api.exception.BookNotFoundException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @RestControllerAdvice
-public class BookControllerAdvice {
+public class ExceptionControllerAdvice {
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(AuthorNotFoundException.class)
+    public String handleAuthorNotFoundException(AuthorNotFoundException ex) {
+        return String.format("{ \"message\": \"%s\" }", ex.getMessage());
+    }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(BookNotFoundException.class)
-    public ResponseEntity<String> resourceNotFoundException(BookNotFoundException ex) {
-        return new ResponseEntity<>("{\"message\": \""+ex.getLocalizedMessage()+"\"}", HttpStatus.NOT_FOUND);
+    public String handleBookNotFoundException(BookNotFoundException ex) {
+        return String.format("{ \"message\": \"%s\" }", ex.getLocalizedMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> badRequestException(MethodArgumentNotValidException ex) {
+    public String handleBadRequestException(MethodArgumentNotValidException ex) {
         String error = ex.getBindingResult().getAllErrors()
                 .stream()
                 .findFirst()
                 .map(ObjectError::getDefaultMessage)
                 .get();
-
-        return new ResponseEntity<>("{\"message\": \""+error+"\"}", HttpStatus.BAD_REQUEST);
+        return String.format("{ \"message\": \"%s\" }", error);
     }
 }

@@ -6,13 +6,13 @@ import com.mybooks.api.exception.AuthorNotFoundException;
 import java.util.List;
 
 public interface AuthorService {
-    List<AuthorDTO> fetchAll();
+    List<AuthorDTO> getAllAuthors();
 
-    AuthorDTO fetchById(String id) throws AuthorNotFoundException;
+    AuthorDTO getAuthorById(String id) throws AuthorNotFoundException;
 
-    AuthorDTO save(AuthorDTO authorDTO);
+    AuthorDTO addAuthor(AuthorDTO authorDTO);
 
-    AuthorDTO update(AuthorDTO updatedAuthorDTO, String id) throws AuthorNotFoundException;
+    AuthorDTO updateAuthor(AuthorDTO updatedAuthorDTO, String id) throws AuthorNotFoundException;
 
     void deleteAuthor(String id) throws AuthorNotFoundException;
 }

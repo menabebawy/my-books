@@ -1,4 +1,4 @@
-package com.mybooks.api.configure;
+package com.mybooks.api.config;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;

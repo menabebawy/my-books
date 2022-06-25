@@ -32,18 +32,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @WebMvcTest(AuthorController.class)
-public class AuthorControllerTest {
-    final private String baseUrl = "/book/author";
-    final private String notFoundAuthorId = "51";
+class AuthorControllerTest {
+    private final String baseUrl = "/book/author";
+    private final String notFoundAuthorId = "51";
+    private final AuthorDTO author1 = AuthorDTO.builder().id("Author1_id").firstName("Sam").lastName("Simon").build();
+    private final AuthorDTO author2 = AuthorDTO.builder().id("Author2_id").firstName("Adi").lastName("John").build();
+    private final AuthorDTO author3 = AuthorDTO.builder().id("Author3_id").firstName("Dodo").lastName("Adel").build();
     @Autowired
     MockMvc mockMvc;
     @Autowired
     ObjectMapper mapper;
     @MockBean
     AuthorServiceImpl authorService;
-    AuthorDTO author1 = AuthorDTO.builder().id("Author1_id").firstName("Sam").lastName("Simon").build();
-    AuthorDTO author2 = AuthorDTO.builder().id("Author2_id").firstName("Adi").lastName("John").build();
-    AuthorDTO author3 = AuthorDTO.builder().id("Author3_id").firstName("Dodo").lastName("Adel").build();
+
     private AuthorMapper authorMapper;
 
     @BeforeEach
@@ -52,10 +53,10 @@ public class AuthorControllerTest {
     }
 
     @Test
-    public void getAllAuthors_success() throws Exception {
+    void getAllAuthors_success() throws Exception {
         List<AuthorDTO> authors = new ArrayList<>(Arrays.asList(author1, author2, author3));
 
-        when(authorService.fetchAll()).thenReturn(authors);
+        when(authorService.getAllAuthors()).thenReturn(authors);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl)
@@ -67,8 +68,8 @@ public class AuthorControllerTest {
     }
 
     @Test
-    public void getAuthorById_success() throws Exception {
-        when(authorService.fetchById(author1.getId())).thenReturn(author1);
+    void getAuthorById_success() throws Exception {
+        when(authorService.getAuthorById(author1.getId())).thenReturn(author1);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl + "/" + author1.getId())
@@ -80,8 +81,8 @@ public class AuthorControllerTest {
     }
 
     @Test
-    public void whenGetAuthorRequestByNotFoundId_thenCorrectResponse() throws Exception {
-        when(authorService.fetchById(notFoundAuthorId)).thenThrow(new AuthorNotFoundException(notFoundAuthorId));
+    void whenGetAuthorRequestByNotFoundId_thenCorrectResponse() throws Exception {
+        when(authorService.getAuthorById(notFoundAuthorId)).thenThrow(new AuthorNotFoundException(notFoundAuthorId));
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl + "/" + notFoundAuthorId)
@@ -92,9 +93,9 @@ public class AuthorControllerTest {
     }
 
     @Test
-    public void addNewAuthor_success() throws Exception {
+    void addNewAuthor_success() throws Exception {
         Author author = getMockAuthor();
-        when(authorService.save(ArgumentMatchers.any(AuthorDTO.class))).thenReturn(authorMapper.transformToAuthorDTO(author));
+        when(authorService.addAuthor(ArgumentMatchers.any(AuthorDTO.class))).thenReturn(authorMapper.transformToAuthorDTO(author));
 
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -108,7 +109,7 @@ public class AuthorControllerTest {
     }
 
     @Test
-    public void whenPostRequestToAuthorAndInValidAuthorFirstName_thenCorrectResponse() throws Exception {
+    void whenPostRequestToAuthorAndInValidAuthorFirstName_thenCorrectResponse() throws Exception {
         Author author = getMockAuthor();
         author.setFirstName(null);
 
@@ -123,7 +124,7 @@ public class AuthorControllerTest {
     }
 
     @Test
-    public void whenPostRequestToAuthorAndInValidAuthorLastName_thenCorrectResponse() throws Exception {
+    void whenPostRequestToAuthorAndInValidAuthorLastName_thenCorrectResponse() throws Exception {
         Author author = getMockAuthor();
         author.setLastName(null);
 
@@ -138,13 +139,13 @@ public class AuthorControllerTest {
     }
 
     @Test
-    public void updateAuthor_success() throws Exception {
+    void updateAuthor_success() throws Exception {
         AuthorDTO updatedAuthor1 = AuthorDTO.builder()
                 .id(author1.getId())
                 .firstName("Dark")
                 .lastName("Tim")
                 .build();
-        when(authorService.update(ArgumentMatchers.any(AuthorDTO.class), ArgumentMatchers.any(String.class))).thenReturn(updatedAuthor1);
+        when(authorService.updateAuthor(ArgumentMatchers.any(AuthorDTO.class), ArgumentMatchers.any(String.class))).thenReturn(updatedAuthor1);
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(baseUrl + "/" + author1.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -158,9 +159,9 @@ public class AuthorControllerTest {
     }
 
     @Test
-    public void updateAuthor_notFound() throws Exception {
+    void updateAuthor_notFound() throws Exception {
         Author updatedAuthor = getMockAuthor();
-        when(authorService.update(ArgumentMatchers.any(AuthorDTO.class), ArgumentMatchers.any(String.class))).thenThrow(new AuthorNotFoundException(notFoundAuthorId));
+        when(authorService.updateAuthor(ArgumentMatchers.any(AuthorDTO.class), ArgumentMatchers.any(String.class))).thenThrow(new AuthorNotFoundException(notFoundAuthorId));
 
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders
                 .put(baseUrl + "/" + notFoundAuthorId)
@@ -176,7 +177,7 @@ public class AuthorControllerTest {
     }
 
     @Test
-    public void whenPutRequestToAuthorAndInvalidAuthorFirstName_thenCorrectResponse() throws Exception {
+    void whenPutRequestToAuthorAndInvalidAuthorFirstName_thenCorrectResponse() throws Exception {
         AuthorDTO updatedAuthor = AuthorDTO.builder()
                 .id(author1.getId())
                 .firstName(null)
@@ -194,7 +195,7 @@ public class AuthorControllerTest {
     }
 
     @Test
-    public void whenPutRequestToAuthorAndInvalidAuthorLastName_thenCorrectResponse() throws Exception {
+    void whenPutRequestToAuthorAndInvalidAuthorLastName_thenCorrectResponse() throws Exception {
         AuthorDTO updatedAuthor = AuthorDTO.builder()
                 .id(author1.getId())
                 .firstName("Tim")
@@ -212,7 +213,7 @@ public class AuthorControllerTest {
     }
 
     @Test
-    public void deleteAuthorById_success() throws Exception {
+    void deleteAuthorById_success() throws Exception {
         doNothing().when(authorService).deleteAuthor(author1.getId());
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -222,7 +223,7 @@ public class AuthorControllerTest {
     }
 
     @Test
-    public void deleteAuthorById_notFound() throws Exception {
+    void deleteAuthorById_notFound() throws Exception {
         doThrow(new AuthorNotFoundException("51")).when(authorService).deleteAuthor("51");
 
         mockMvc.perform(MockMvcRequestBuilders

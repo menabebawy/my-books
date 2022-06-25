@@ -22,21 +22,21 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public List<AuthorDTO> fetchAll() {
+    public List<AuthorDTO> getAllAuthors() {
         return StreamSupport.stream(authorRepository.findAll().spliterator(), false)
                 .map(authorMapper::transformToAuthorDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public AuthorDTO fetchById(String id) throws AuthorNotFoundException {
+    public AuthorDTO getAuthorById(String id) throws AuthorNotFoundException {
         return authorRepository.findById(id)
                 .map(authorMapper::transformToAuthorDTO)
                 .orElseThrow(() -> new AuthorNotFoundException(id));
     }
 
     @Override
-    public AuthorDTO save(AuthorDTO authorDTO) {
+    public AuthorDTO addAuthor(AuthorDTO authorDTO) {
         return Optional.of(authorDTO)
                 .map(authorMapper::transformToAuthor)
                 .map(authorRepository::save)
@@ -45,7 +45,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorDTO update(AuthorDTO updatedAuthorDTO, String id) throws AuthorNotFoundException {
+    public AuthorDTO updateAuthor(AuthorDTO updatedAuthorDTO, String id) throws AuthorNotFoundException {
         return authorRepository.findById(id)
                 .map(author -> {
                     author.setFirstName(updatedAuthorDTO.getFirstName());
@@ -59,7 +59,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public void deleteAuthor(String id) throws AuthorNotFoundException {
-        fetchById(id);
+        getAuthorById(id);
         authorRepository.deleteById(id);
     }
 }

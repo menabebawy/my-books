@@ -32,12 +32,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @WebMvcTest(BookController.class)
-public class BookControllerTest {
+class BookControllerTest {
     private final BookDTO book1 = BookDTO.builder().id("Book1_id").title("Title1").authorId("Author1_id").build();
     private final BookDTO book2 = BookDTO.builder().id("Book2_id").title("Title2").authorId("Author2_id").build();
     private final BookDTO book3 = BookDTO.builder().id("Book3_id").title("Title3").authorId("Author3_id").build();
 
-    final private String baseUrl = "/book";
+    private final String baseUrl = "/book";
     @Autowired
     MockMvc mockMvc;
     @Autowired
@@ -52,10 +52,10 @@ public class BookControllerTest {
     }
 
     @Test
-    public void getAllBook_success() throws Exception {
+    void getAllBook_success() throws Exception {
         List<BookDTO> books = new ArrayList<>(Arrays.asList(book1, book2, book3));
 
-        when(bookService.fetchAll()).thenReturn(books);
+        when(bookService.getAllBooks()).thenReturn(books);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl)
@@ -67,8 +67,8 @@ public class BookControllerTest {
     }
 
     @Test
-    public void getBookById_success() throws Exception {
-        when(bookService.fetchById(book1.getId())).thenReturn(book1);
+    void getBookById_success() throws Exception {
+        when(bookService.getBookById(book1.getId())).thenReturn(book1);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl + "/" + book1.getId())
@@ -79,8 +79,8 @@ public class BookControllerTest {
     }
 
     @Test
-    public void whenGetBookRequestByNotFoundId_thenCorrectResponse() throws Exception {
-        when(bookService.fetchById(book1.getId())).thenThrow(new BookNotFoundException(book1.getId()));
+    void whenGetBookRequestByNotFoundId_thenCorrectResponse() throws Exception {
+        when(bookService.getBookById(book1.getId())).thenThrow(new BookNotFoundException(book1.getId()));
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(baseUrl + "/" + book1.getId())
@@ -91,10 +91,10 @@ public class BookControllerTest {
     }
 
     @Test
-    public void addNewBook_success() throws Exception {
+    void addNewBook_success() throws Exception {
         Book newBook = getMockBook();
 
-        when(bookService.save(ArgumentMatchers.any(BookDTO.class))).thenReturn(bookMapper.transformToBookDTO(newBook));
+        when(bookService.addNewBook(ArgumentMatchers.any(BookDTO.class))).thenReturn(bookMapper.transformToBookDTO(newBook));
 
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(baseUrl)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -108,7 +108,7 @@ public class BookControllerTest {
     }
 
     @Test
-    public void whenPostRequestToBookAndInValidBookTitle_thenCorrectResponse() throws Exception {
+    void whenPostRequestToBookAndInValidBookTitle_thenCorrectResponse() throws Exception {
         Book newBook = getMockBook();
         newBook.setTitle(null);
 
@@ -122,7 +122,7 @@ public class BookControllerTest {
     }
 
     @Test
-    public void whenPostRequestToBookAndInValidBookAuthorId_thenCorrectResponse() throws Exception {
+    void whenPostRequestToBookAndInValidBookAuthorId_thenCorrectResponse() throws Exception {
         Book newBook = getMockBook();
         newBook.setAuthorId(null);
 
@@ -136,14 +136,14 @@ public class BookControllerTest {
     }
 
     @Test
-    public void updateBook_success() throws Exception {
+    void updateBook_success() throws Exception {
         BookDTO updatedBook = BookDTO.builder()
                 .id(getMockBook().getId())
                 .title("New Title")
                 .authorId(getMockBook().getAuthorId())
                 .build();
 
-        when(bookService.update(ArgumentMatchers.any(BookDTO.class), ArgumentMatchers.any(String.class))).thenReturn(updatedBook);
+        when(bookService.updateBook(ArgumentMatchers.any(BookDTO.class), ArgumentMatchers.any(String.class))).thenReturn(updatedBook);
 
         MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put(baseUrl + "/" + updatedBook.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -156,7 +156,7 @@ public class BookControllerTest {
     }
 
     @Test
-    public void whenPutRequestToBookAndInvalidBookTitle_thenCorrectResponse() throws Exception {
+    void whenPutRequestToBookAndInvalidBookTitle_thenCorrectResponse() throws Exception {
         BookDTO updatedBook = BookDTO.builder()
                 .id(getMockBook().getId())
                 .title("")
@@ -174,7 +174,7 @@ public class BookControllerTest {
     }
 
     @Test
-    public void whenPutRequestToBookAndInvalidBookAuthorId_thenCorrectResponse() throws Exception {
+    void whenPutRequestToBookAndInvalidBookAuthorId_thenCorrectResponse() throws Exception {
         BookDTO updatedBook = BookDTO.builder()
                 .id(getMockBook().getId())
                 .title(getMockBook().getTitle())
@@ -192,8 +192,8 @@ public class BookControllerTest {
     }
 
     @Test
-    public void updateBook_notFound() throws Exception {
-        when(bookService.update(ArgumentMatchers.any(BookDTO.class), ArgumentMatchers.any(String.class))).thenThrow(new BookNotFoundException("51"));
+    void updateBook_notFound() throws Exception {
+        when(bookService.updateBook(ArgumentMatchers.any(BookDTO.class), ArgumentMatchers.any(String.class))).thenThrow(new BookNotFoundException("51"));
 
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders
                 .put(baseUrl + "/" + getMockBook().getId())
@@ -210,7 +210,7 @@ public class BookControllerTest {
     }
 
     @Test
-    public void deleteBookById_success() throws Exception {
+    void deleteBookById_success() throws Exception {
         doNothing().when(bookService).deleteBook(book1.getId());
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -220,7 +220,7 @@ public class BookControllerTest {
     }
 
     @Test
-    public void deleteBookById_notFound() throws Exception {
+    void deleteBookById_notFound() throws Exception {
         doThrow(new BookNotFoundException("51")).when(bookService).deleteBook("51");
 
         mockMvc.perform(MockMvcRequestBuilders

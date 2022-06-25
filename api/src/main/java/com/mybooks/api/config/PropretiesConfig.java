@@ -1,4 +1,4 @@
-package com.mybooks.api.configure;
+package com.mybooks.api.config;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;

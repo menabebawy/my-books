@@ -6,13 +6,13 @@ import com.mybooks.api.exception.BookNotFoundException;
 import java.util.List;
 
 public interface BookService {
-    List<BookDTO> fetchAll();
+    List<BookDTO> getAllBooks();
 
-    BookDTO fetchById(String id) throws BookNotFoundException;
+    BookDTO getBookById(String id) throws BookNotFoundException;
 
-    BookDTO save(BookDTO bookDTO);
+    BookDTO addNewBook(BookDTO bookDTO);
 
-    BookDTO update(BookDTO updatedBookDTO, String id) throws BookNotFoundException;
+    BookDTO updateBook(BookDTO updatedBookDTO, String id) throws BookNotFoundException;
 
     void deleteBook(String id) throws BookNotFoundException;
 }

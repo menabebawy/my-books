@@ -22,21 +22,21 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDTO> fetchAll() {
+    public List<BookDTO> getAllBooks() {
         return StreamSupport.stream(bookRepository.findAll().spliterator(), false)
                 .map(bookMapper::transformToBookDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public BookDTO fetchById(String id) throws BookNotFoundException {
+    public BookDTO getBookById(String id) throws BookNotFoundException {
         return bookRepository.findById(id)
                 .map(bookMapper::transformToBookDTO)
                 .orElseThrow(() -> new BookNotFoundException(id));
     }
 
     @Override
-    public BookDTO save(BookDTO bookDTO) {
+    public BookDTO addNewBook(BookDTO bookDTO) {
         return Optional.of(bookDTO)
                 .map(bookMapper::transformToBook)
                 .map(bookRepository::save)
@@ -45,7 +45,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDTO update(BookDTO updatedBookDTO, String id) throws BookNotFoundException {
+    public BookDTO updateBook(BookDTO updatedBookDTO, String id) throws BookNotFoundException {
         return bookRepository.findById(id)
                 .map(book -> {
                     book.setTitle(updatedBookDTO.getTitle());
@@ -59,7 +59,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void deleteBook(String id) throws BookNotFoundException {
-        fetchById(id);
+        getBookById(id);
         bookRepository.deleteById(id);
     }
 }

@@ -7,5 +7,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface BookMapper {
     BookDTO transformToBookDTO(Book book);
+
     Book transformToBook(BookDTO bookDTO);
 }

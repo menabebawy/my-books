@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class BookServiceTest {
+class BookServiceTest {
     private final String notFoundBookId = "51";
     @Mock
     BookRepository bookRepository;
@@ -50,7 +50,7 @@ public class BookServiceTest {
         List<BookDTO> createdBooks = new ArrayList<>(Arrays.asList(book1, book2, book3));
         List<Book> createdBooksList = createdBooks.stream().map(bookMapper::transformToBook).collect(Collectors.toList());
         when(bookRepository.findAll()).thenReturn(createdBooksList);
-        List<BookDTO> returnedBooksList = bookService.fetchAll();
+        List<BookDTO> returnedBooksList = bookService.getAllBooks();
         assertEquals(returnedBooksList.size(), createdBooksList.size());
     }
 
@@ -58,8 +58,8 @@ public class BookServiceTest {
     void fetchBookById_success() throws IOException {
         Book book = getMockBook();
         when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
-        assertDoesNotThrow(() -> bookService.fetchById(book.getId()));
-        BookDTO createdBook = bookService.fetchById(book.getId());
+        assertDoesNotThrow(() -> bookService.getBookById(book.getId()));
+        BookDTO createdBook = bookService.getBookById(book.getId());
         assertEquals(createdBook.getId(), book.getId());
         assertEquals(createdBook.getTitle(), book.getTitle());
     }
@@ -67,7 +67,7 @@ public class BookServiceTest {
     @Test
     void getBookById_notFound() {
         when(bookRepository.findById(notFoundBookId)).thenThrow(new BookNotFoundException(notFoundBookId));
-        assertThrows(BookNotFoundException.class, () -> bookService.fetchById(notFoundBookId));
+        assertThrows(BookNotFoundException.class, () -> bookService.getBookById(notFoundBookId));
         verify(bookRepository, Mockito.times(1)).findById(notFoundBookId);
     }
 
@@ -75,7 +75,7 @@ public class BookServiceTest {
     void createNewBook_success() throws IOException {
         Book book = getMockBook();
         when(bookRepository.save(book)).thenReturn(book);
-        BookDTO createdBook = bookService.save(bookMapper.transformToBookDTO(book));
+        BookDTO createdBook = bookService.addNewBook(bookMapper.transformToBookDTO(book));
         assertEquals(createdBook.getTitle(), book.getTitle());
         assertEquals(createdBook.getId(), book.getId());
         verify(bookRepository, Mockito.times(1)).save(book);
@@ -92,8 +92,8 @@ public class BookServiceTest {
         Book updatedBook = bookMapper.transformToBook(updatedBookDTO);
         when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
         when(bookRepository.save(book)).thenReturn(updatedBook);
-        assertDoesNotThrow(() -> bookService.update(updatedBookDTO, book.getId()));
-        assertEquals(bookService.update(updatedBookDTO, book.getId()).getTitle(), updatedBookDTO.getTitle());
+        assertDoesNotThrow(() -> bookService.updateBook(updatedBookDTO, book.getId()));
+        assertEquals(bookService.updateBook(updatedBookDTO, book.getId()).getTitle(), updatedBookDTO.getTitle());
     }
 
     @Test
@@ -103,17 +103,17 @@ public class BookServiceTest {
                 .title("New Title")
                 .authorId(getMockBook().getAuthorId()).build();
         when(bookRepository.findById(updatedBook.getId())).thenThrow(new BookNotFoundException(updatedBook.getId()));
-        assertThrows(BookNotFoundException.class, () -> bookService.update(updatedBook, updatedBook.getId()));
+        assertThrows(BookNotFoundException.class, () -> bookService.updateBook(updatedBook, updatedBook.getId()));
     }
 
     @Test
-    public void deleteBook_notFound() {
+    void deleteBook_notFound() {
         doThrow(BookNotFoundException.class).when(bookRepository).deleteById(notFoundBookId);
         assertThrows(BookNotFoundException.class, () -> bookService.deleteBook(notFoundBookId));
     }
 
     @Test
-    public void deleteBook_success() throws IOException {
+    void deleteBook_success() throws IOException {
         Book book = getMockBook();
         when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
         doNothing().when(bookRepository).deleteById(book.getId());
