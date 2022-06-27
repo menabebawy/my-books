@@ -1,7 +1,10 @@
 package com.mybooks.api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mybooks.api.dto.BookDTO;
 import com.mybooks.api.exception.BookNotFoundException;
+import com.mybooks.api.mapper.BookMapper;
+import com.mybooks.api.mapper.BookMapperImpl;
 import com.mybooks.api.model.Book;
 import com.mybooks.api.repository.BookRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -14,20 +17,24 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-public class BookServiceTest {
+class BookServiceTest {
     private final String notFoundBookId = "51";
     @Mock
     BookRepository bookRepository;
+
+    private BookMapper bookMapper;
     private BookService bookService;
 
     @BeforeEach
     void setUp() {
-        bookService = new BookServiceImpl(bookRepository);
+        bookMapper = new BookMapperImpl();
+        bookService = new BookServiceImpl(bookRepository, bookMapper);
     }
 
     @AfterEach
@@ -36,21 +43,23 @@ public class BookServiceTest {
     }
 
     @Test
-    void getAllBooks_success() {
-        Book book1 = new Book("Book1_id", "Title1", "author_id");
-        Book book2 = new Book("Book2_id", "Title2", "author_id");
-        Book book3 = new Book("Book3_id", "Title3", "author_id");
-        List<Book> books = new ArrayList<>(Arrays.asList(book1, book2, book3));
-        when(bookRepository.findAll()).thenReturn(books);
-        assertEquals(bookService.getAllBooks().size(), books.size());
+    void fetchAllBooks_success() {
+        BookDTO book1 = BookDTO.builder().id("Book1_id").title("Title1").authorId("author_id").build();
+        BookDTO book2 = BookDTO.builder().id("Book2_id").title("Title2").authorId("author_id").build();
+        BookDTO book3 = BookDTO.builder().id("Book3_id").title("Title3").authorId("author_id").build();
+        List<BookDTO> createdBooks = new ArrayList<>(Arrays.asList(book1, book2, book3));
+        List<Book> createdBooksList = createdBooks.stream().map(bookMapper::transformToBook).collect(Collectors.toList());
+        when(bookRepository.findAll()).thenReturn(createdBooksList);
+        List<BookDTO> returnedBooksList = bookService.getAllBooks();
+        assertEquals(returnedBooksList.size(), createdBooksList.size());
     }
 
     @Test
-    void getBookById_success() throws IOException {
+    void fetchBookById_success() throws IOException {
         Book book = getMockBook();
         when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
         assertDoesNotThrow(() -> bookService.getBookById(book.getId()));
-        Book createdBook = bookService.getBookById(book.getId());
+        BookDTO createdBook = bookService.getBookById(book.getId());
         assertEquals(createdBook.getId(), book.getId());
         assertEquals(createdBook.getTitle(), book.getTitle());
     }
@@ -66,7 +75,7 @@ public class BookServiceTest {
     void createNewBook_success() throws IOException {
         Book book = getMockBook();
         when(bookRepository.save(book)).thenReturn(book);
-        Book createdBook = bookService.createNewBook(book);
+        BookDTO createdBook = bookService.addNewBook(bookMapper.transformToBookDTO(book));
         assertEquals(createdBook.getTitle(), book.getTitle());
         assertEquals(createdBook.getId(), book.getId());
         verify(bookRepository, Mockito.times(1)).save(book);
@@ -75,29 +84,36 @@ public class BookServiceTest {
     @Test
     void updateBook_success() throws IOException {
         Book book = getMockBook();
-        Book updatedBook = getMockBook();
-        updatedBook.setTitle("New Title");
+        BookDTO updatedBookDTO = BookDTO.builder()
+                .id(getMockBook().getId())
+                .title("New Title")
+                .authorId(getMockBook().getAuthorId())
+                .build();
+        Book updatedBook = bookMapper.transformToBook(updatedBookDTO);
         when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
-        assertDoesNotThrow(() -> bookService.updateBook(updatedBook, book.getId()));
-        assertEquals(bookService.updateBook(updatedBook, book.getId()).getTitle(), updatedBook.getTitle());
+        when(bookRepository.save(book)).thenReturn(updatedBook);
+        assertDoesNotThrow(() -> bookService.updateBook(updatedBookDTO, book.getId()));
+        assertEquals(bookService.updateBook(updatedBookDTO, book.getId()).getTitle(), updatedBookDTO.getTitle());
     }
 
     @Test
     void updateBook_notFound() throws IOException {
-        Book updatedBook = getMockBook();
-        updatedBook.setTitle("New Title");
+        BookDTO updatedBook = BookDTO.builder()
+                .id(getMockBook().getId())
+                .title("New Title")
+                .authorId(getMockBook().getAuthorId()).build();
         when(bookRepository.findById(updatedBook.getId())).thenThrow(new BookNotFoundException(updatedBook.getId()));
         assertThrows(BookNotFoundException.class, () -> bookService.updateBook(updatedBook, updatedBook.getId()));
     }
 
     @Test
-    public void deleteBook_notFound() {
+    void deleteBook_notFound() {
         doThrow(BookNotFoundException.class).when(bookRepository).deleteById(notFoundBookId);
         assertThrows(BookNotFoundException.class, () -> bookService.deleteBook(notFoundBookId));
     }
 
     @Test
-    public void deleteBook_success() throws IOException {
+    void deleteBook_success() throws IOException {
         Book book = getMockBook();
         when(bookRepository.findById(book.getId())).thenReturn(Optional.of(book));
         doNothing().when(bookRepository).deleteById(book.getId());

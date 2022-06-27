@@ -1,18 +1,18 @@
 package com.mybooks.api.service;
 
+import com.mybooks.api.dto.AuthorDTO;
 import com.mybooks.api.exception.AuthorNotFoundException;
-import com.mybooks.api.model.Author;
 
 import java.util.List;
 
 public interface AuthorService {
-    List<Author> getAllAuthors();
+    List<AuthorDTO> getAllAuthors();
 
-    Author getAuthorById(String id) throws AuthorNotFoundException;
+    AuthorDTO getAuthorById(String id) throws AuthorNotFoundException;
 
-    Author addAuthor(Author author);
+    AuthorDTO addAuthor(AuthorDTO authorDTO);
 
-    Author updateAuthor(Author updatedAuthor, String id) throws AuthorNotFoundException;
+    AuthorDTO updateAuthor(AuthorDTO updatedAuthorDTO, String id) throws AuthorNotFoundException;
 
     void deleteAuthor(String id) throws AuthorNotFoundException;
 }

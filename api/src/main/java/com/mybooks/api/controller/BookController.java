@@ -1,12 +1,13 @@
 package com.mybooks.api.controller;
 
+import com.mybooks.api.dto.BookDTO;
 import com.mybooks.api.exception.BookNotFoundException;
-import com.mybooks.api.model.Book;
 import com.mybooks.api.service.BookService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -20,26 +21,31 @@ public class BookController {
     }
 
     @GetMapping()
-    List<Book> getAllBooks() {
+    @ResponseStatus(HttpStatus.OK)
+    List<BookDTO> getAllBooks() {
         return bookService.getAllBooks();
     }
 
     @GetMapping("/{id}")
-    Book getBookById(@PathVariable String id) throws BookNotFoundException {
+    @ResponseStatus(HttpStatus.OK)
+    BookDTO getBookById(@Valid @PathVariable String id) throws BookNotFoundException {
         return bookService.getBookById(id);
     }
 
     @PostMapping()
-    Book createNewBook(@RequestBody @Validated Book book) {
-        return bookService.createNewBook(book);
+    @ResponseStatus(HttpStatus.CREATED)
+    BookDTO createNewBook(@Valid @RequestBody BookDTO book) {
+        return bookService.addNewBook(book);
     }
 
     @PutMapping("/{id}")
-    Book updateBook(@RequestBody Book updatedBook, @PathVariable String id) throws BookNotFoundException {
-        return bookService.updateBook(updatedBook, id);
+    @ResponseStatus(HttpStatus.OK)
+    BookDTO updateBook(@Valid @RequestBody BookDTO updatedBookDTO, @Valid @PathVariable String id) throws BookNotFoundException {
+        return bookService.updateBook(updatedBookDTO, id);
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     void deleteBook(@PathVariable String id) throws BookNotFoundException {
         bookService.deleteBook(id);
     }

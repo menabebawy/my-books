@@ -1,9 +1,6 @@
-package com.mybooks.api.configure;
+package com.mybooks.api.config;
 
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
@@ -16,18 +13,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableDynamoDBRepositories(basePackages = "com.mybooks.api.repository")
 public class DynamoDBConfig {
-    private final AWSConfig awsConfig;
-
-    public AWSCredentialsProvider awsCredentialsProvider() {
-        return new AWSStaticCredentialsProvider(new BasicAWSCredentials(awsConfig.getAccessKey(), awsConfig.getSecretKey()));
-    }
 
     @Bean
     public AmazonDynamoDB amazonDynamoDB() {
         return AmazonDynamoDBClientBuilder
                 .standard()
-                .withCredentials(awsCredentialsProvider())
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(awsConfig.getEndpoint(), awsConfig.getRegion()))
+                .withRegion(Regions.US_WEST_1)
                 .build();
     }
 

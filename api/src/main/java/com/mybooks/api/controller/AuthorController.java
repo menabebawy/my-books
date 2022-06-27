@@ -1,9 +1,10 @@
 package com.mybooks.api.controller;
 
+import com.mybooks.api.dto.AuthorDTO;
 import com.mybooks.api.exception.AuthorNotFoundException;
-import com.mybooks.api.model.Author;
 import com.mybooks.api.service.AuthorService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,26 +21,31 @@ public class AuthorController {
     }
 
     @GetMapping()
-    List<Author> getAllAuthors() {
+    @ResponseStatus(HttpStatus.OK)
+    List<AuthorDTO> getAllAuthors() {
         return authorService.getAllAuthors();
     }
 
     @GetMapping("/{id}")
-    Author getAuthorById(@PathVariable String id) throws AuthorNotFoundException {
+    @ResponseStatus(HttpStatus.OK)
+    AuthorDTO getAuthorById(@PathVariable String id) throws AuthorNotFoundException {
         return authorService.getAuthorById(id);
     }
 
     @PostMapping()
-    Author createNewAuthor(@Valid @RequestBody Author author) {
-        return authorService.addAuthor(author);
+    @ResponseStatus(HttpStatus.CREATED)
+    AuthorDTO addAuthor(@Valid @RequestBody AuthorDTO authorDTO) {
+        return authorService.addAuthor(authorDTO);
     }
 
     @PutMapping("/{id}")
-    Author updateAuthor(@RequestBody @Valid Author updatedAuthor, @PathVariable String id) throws AuthorNotFoundException {
-        return authorService.updateAuthor(updatedAuthor, id);
+    @ResponseStatus(HttpStatus.OK)
+    AuthorDTO updateAuthor(@Valid @RequestBody AuthorDTO updatedAuthorDTO, @Valid @PathVariable String id) throws AuthorNotFoundException {
+        return authorService.updateAuthor(updatedAuthorDTO, id);
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     void deleteAuthor(@PathVariable String id) throws AuthorNotFoundException {
         authorService.deleteAuthor(id);
     }
