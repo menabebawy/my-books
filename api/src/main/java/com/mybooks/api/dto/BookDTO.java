@@ -8,11 +8,11 @@ import javax.validation.constraints.NotBlank;
 @Builder
 @Value
 public class BookDTO {
-    private String id;
+    String id;
 
     @NotBlank(message = "{book.title.required}")
-    private String title;
+    String title;
 
     @NotBlank(message = "{book.authorId.required}")
-    private String authorId;
+    String authorId;
 }

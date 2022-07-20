@@ -8,11 +8,11 @@ import javax.validation.constraints.NotBlank;
 @Builder
 @Value
 public class AuthorDTO {
-    private String id;
+    String id;
 
     @NotBlank(message = "{author.firstName.required}")
-    private String firstName;
+    String firstName;
 
     @NotBlank(message = "{author.lastName.required}")
-    private String lastName;
+    String lastName;
 }
