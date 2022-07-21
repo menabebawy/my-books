@@ -26,7 +26,6 @@ import static org.mapstruct.ap.internal.util.Strings.isEmpty;
 public class JwtTokenFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final JwtSecretKey jwtSecretKey;
-    private final String TOKEN_PREFIX = "Bearer";
 
     public JwtTokenFilter(UserDetailsService userDetailsService, JwtSecretKey jwtSecretKey) {
         this.userDetailsService = userDetailsService;
@@ -37,12 +36,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String TOKEN_PREFIX = "Bearer";
         if (isEmpty(header) || !header.startsWith(TOKEN_PREFIX)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String extractedEmail = null;
+        String extractedEmail;
         try {
             extractedEmail =
                     Jwts.parser()
@@ -69,5 +69,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
+        filterChain.doFilter(request, response);
     }
 }

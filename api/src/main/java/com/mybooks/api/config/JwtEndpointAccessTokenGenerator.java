@@ -24,11 +24,11 @@ public class JwtEndpointAccessTokenGenerator {
         this.jwtSecretKey = jwtSecretKey;
     }
 
-    private String createAccessToken(String email, Set<String> roles) {
+    public String createAccessToken(String email, Set<String> roles) {
         return createToken(email, roles, ACCESS_TOKEN_VALID_TIME);
     }
 
-    private String createRefreshToken(String email, Set<String> roles) {
+    public String createRefreshToken(String email, Set<String> roles) {
         return createToken(email, roles, REFRESH_TOKEN_VALID_TIME);
     }
 

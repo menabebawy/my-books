@@ -1,18 +1,14 @@
 package com.mybooks.api.config;
 
-import com.mybooks.api.exception.UserNotFoundException;
 import com.mybooks.api.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import static java.lang.String.format;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -27,13 +23,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(email -> userRepository
-                .findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(format("User: %s, not found", email))));
-    }
-
-    @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .cors()
@@ -44,7 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/login", "/signup")
+                .antMatchers("/login", "/signup", "/refresh-token")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

@@ -1,6 +1,7 @@
 package com.mybooks.api.controller;
 
 import com.mybooks.api.dto.SignupRequestDTO;
+import com.mybooks.api.exception.UserAlreadyExistException;
 import com.mybooks.api.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ public class SignupController {
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.OK)
-    public void signup(@Valid @RequestBody SignupRequestDTO signupRequestDTO) {
+    public void signup(@Valid @RequestBody SignupRequestDTO signupRequestDTO) throws UserAlreadyExistException {
         userService.addUser(signupRequestDTO);
     }
 }

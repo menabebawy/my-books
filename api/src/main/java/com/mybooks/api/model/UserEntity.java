@@ -23,5 +23,5 @@ public class UserEntity {
     private String password;
 
     @DynamoDBAttribute
-    private Set<UserRole> roles;
+    private Set<String> roles;
 }
