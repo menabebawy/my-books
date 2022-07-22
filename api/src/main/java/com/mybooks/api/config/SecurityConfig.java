@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/login", "/signup", "/refresh-token")
+                .antMatchers("/user/login", "/user/signup", "/user/refresh-token")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

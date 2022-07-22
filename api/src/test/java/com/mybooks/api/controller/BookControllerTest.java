@@ -4,11 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mybooks.api.dto.BookDTO;
 import com.mybooks.api.exception.BookNotFoundException;
 import com.mybooks.api.mapper.BookMapper;
-import com.mybooks.api.mapper.BookMapperImpl;
 import com.mybooks.api.model.Book;
 import com.mybooks.api.service.BookService;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +18,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
 @WithMockUser
@@ -54,11 +53,6 @@ class BookControllerTest {
     @Autowired
     BookMapper bookMapper;
 
-    @BeforeEach
-    void setUp() {
-        bookMapper = new BookMapperImpl();
-    }
-
     @Test
     void getAllBook_success() throws Exception {
         List<BookDTO> books = new ArrayList<>(Arrays.asList(book1, book2, book3));
@@ -67,10 +61,10 @@ class BookControllerTest {
 
         mockMvc.perform(get(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(3)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[2].title", Matchers.is("Title3")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[2].authorId", Matchers.is("Author3_id")));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Matchers.hasSize(3)))
+                .andExpect(jsonPath("$[2].title", Matchers.is("Title3")))
+                .andExpect(jsonPath("$[2].authorId", Matchers.is("Author3_id")));
     }
 
     @Test
@@ -79,9 +73,9 @@ class BookControllerTest {
 
         mockMvc.perform(get(baseUrl + "/" + book1.getId())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.title", Matchers.is(book1.getTitle())));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Matchers.notNullValue()))
+                .andExpect(jsonPath("$.title", Matchers.is(book1.getTitle())));
     }
 
     @Test
@@ -90,9 +84,9 @@ class BookControllerTest {
 
         mockMvc.perform(get(baseUrl + "/" + book1.getId())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("Could not find book " + book1.getId())));
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$", Matchers.notNullValue()))
+                .andExpect(jsonPath("message", Matchers.is("Could not find book " + book1.getId())));
     }
 
     @Test
@@ -104,10 +98,10 @@ class BookControllerTest {
         mockMvc.perform(post(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.mapper.writeValueAsString(newBook)))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.title", Matchers.is(newBook.getTitle())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.authorId", Matchers.is(newBook.getAuthorId())));
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$", Matchers.notNullValue()))
+                .andExpect(jsonPath("$.title", Matchers.is(newBook.getTitle())))
+                .andExpect(jsonPath("$.authorId", Matchers.is(newBook.getAuthorId())));
     }
 
     @Test
@@ -118,8 +112,8 @@ class BookControllerTest {
         mockMvc.perform(post(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.mapper.writeValueAsString(newBook)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("title is required")));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("message", Matchers.is("title is required")));
     }
 
     @Test
@@ -130,8 +124,8 @@ class BookControllerTest {
         mockMvc.perform(post(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.mapper.writeValueAsString(newBook)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("authorId is required")));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("message", Matchers.is("authorId is required")));
     }
 
     @Test
@@ -147,9 +141,9 @@ class BookControllerTest {
         mockMvc.perform(put(baseUrl + "/" + updatedBook.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.mapper.writeValueAsString(updatedBook)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.title", Matchers.is(updatedBook.getTitle())));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Matchers.notNullValue()))
+                .andExpect(jsonPath("$.title", Matchers.is(updatedBook.getTitle())));
     }
 
     @Test
@@ -163,9 +157,9 @@ class BookControllerTest {
         mockMvc.perform(put(baseUrl + "/" + updatedBook.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.mapper.writeValueAsString(updatedBook)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("title is required")));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Matchers.notNullValue()))
+                .andExpect(jsonPath("message", Matchers.is("title is required")));
     }
 
     @Test
@@ -179,9 +173,9 @@ class BookControllerTest {
         mockMvc.perform(put(baseUrl + "/" + updatedBook.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.mapper.writeValueAsString(updatedBook)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("authorId is required")));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Matchers.notNullValue()))
+                .andExpect(jsonPath("message", Matchers.is("authorId is required")));
     }
 
     @Test
@@ -192,7 +186,7 @@ class BookControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(this.mapper.writeValueAsString(getMockBook())))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(status().isNotFound())
                 .andExpect(result ->
                         assertTrue(result.getResolvedException() instanceof BookNotFoundException))
                 .andExpect(result ->
@@ -205,7 +199,7 @@ class BookControllerTest {
 
         mockMvc.perform(delete(baseUrl + "/" + book1.getId())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNoContent());
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -214,7 +208,7 @@ class BookControllerTest {
 
         mockMvc.perform(delete(baseUrl + "/51")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(status().isNotFound())
                 .andExpect(result ->
                         assertTrue(result.getResolvedException() instanceof BookNotFoundException))
                 .andExpect(result ->

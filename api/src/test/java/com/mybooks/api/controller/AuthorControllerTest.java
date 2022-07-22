@@ -4,11 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mybooks.api.dto.AuthorDTO;
 import com.mybooks.api.exception.AuthorNotFoundException;
 import com.mybooks.api.mapper.AuthorMapper;
-import com.mybooks.api.mapper.AuthorMapperImpl;
 import com.mybooks.api.model.Author;
 import com.mybooks.api.service.AuthorServiceImpl;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +18,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
 @WithMockUser
@@ -52,12 +51,8 @@ class AuthorControllerTest {
     @MockBean
     AuthorServiceImpl authorService;
 
-    private AuthorMapper authorMapper;
-
-    @BeforeEach
-    void setUp() {
-        authorMapper = new AuthorMapperImpl();
-    }
+    @Autowired
+    AuthorMapper authorMapper;
 
     @Test
     void getAllAuthors_success() throws Exception {
@@ -67,10 +62,10 @@ class AuthorControllerTest {
 
         mockMvc.perform(get(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(3)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].firstName", Matchers.is("Adi")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].lastName", Matchers.is("John")));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Matchers.hasSize(3)))
+                .andExpect(jsonPath("$[1].firstName", Matchers.is("Adi")))
+                .andExpect(jsonPath("$[1].lastName", Matchers.is("John")));
     }
 
     @Test
@@ -79,10 +74,10 @@ class AuthorControllerTest {
 
         mockMvc.perform(get(baseUrl + "/" + author1.getId())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is(author1.getFirstName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.is(author1.getLastName())));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Matchers.notNullValue()))
+                .andExpect(jsonPath("$.firstName", Matchers.is(author1.getFirstName())))
+                .andExpect(jsonPath("$.lastName", Matchers.is(author1.getLastName())));
     }
 
     @Test
@@ -91,9 +86,9 @@ class AuthorControllerTest {
 
         mockMvc.perform(get(baseUrl + "/" + notFoundAuthorId)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("Could not find author " + notFoundAuthorId)));
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$", Matchers.notNullValue()))
+                .andExpect(jsonPath("message", Matchers.is("Could not find author " + notFoundAuthorId)));
     }
 
     @Test
@@ -105,10 +100,10 @@ class AuthorControllerTest {
         mockMvc.perform(post(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.mapper.writeValueAsString(authorDTO)))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is(author.getFirstName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.is(author.getLastName())));
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$", Matchers.notNullValue()))
+                .andExpect(jsonPath("$.firstName", Matchers.is(author.getFirstName())))
+                .andExpect(jsonPath("$.lastName", Matchers.is(author.getLastName())));
     }
 
     @Test
@@ -119,9 +114,9 @@ class AuthorControllerTest {
         mockMvc.perform(post(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.mapper.writeValueAsString(author)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("firstName is required")));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Matchers.notNullValue()))
+                .andExpect(jsonPath("message", Matchers.is("firstName is required")));
     }
 
     @Test
@@ -132,9 +127,9 @@ class AuthorControllerTest {
         mockMvc.perform(post(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.mapper.writeValueAsString(author)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("lastName is required")));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Matchers.notNullValue()))
+                .andExpect(jsonPath("message", Matchers.is("lastName is required")));
     }
 
     @Test
@@ -149,10 +144,10 @@ class AuthorControllerTest {
         mockMvc.perform(put(baseUrl + "/" + author1.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.mapper.writeValueAsString(updatedAuthor1)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName", Matchers.is(updatedAuthor1.getFirstName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName", Matchers.is(updatedAuthor1.getLastName())));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Matchers.notNullValue()))
+                .andExpect(jsonPath("$.firstName", Matchers.is(updatedAuthor1.getFirstName())))
+                .andExpect(jsonPath("$.lastName", Matchers.is(updatedAuthor1.getLastName())));
     }
 
     @Test
@@ -163,7 +158,7 @@ class AuthorControllerTest {
         mockMvc.perform(put(baseUrl + "/" + notFoundAuthorId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.mapper.writeValueAsString(updatedAuthor)))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof AuthorNotFoundException))
                 .andExpect(result ->
                         assertEquals("Could not find author 51",
@@ -181,9 +176,9 @@ class AuthorControllerTest {
         mockMvc.perform(put(baseUrl + "/" + updatedAuthor.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.mapper.writeValueAsString(updatedAuthor)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("firstName is required")));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Matchers.notNullValue()))
+                .andExpect(jsonPath("message", Matchers.is("firstName is required")));
     }
 
     @Test
@@ -197,9 +192,9 @@ class AuthorControllerTest {
         mockMvc.perform(put(baseUrl + "/" + updatedAuthor.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.mapper.writeValueAsString(updatedAuthor)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("message", Matchers.is("lastName is required")));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Matchers.notNullValue()))
+                .andExpect(jsonPath("message", Matchers.is("lastName is required")));
     }
 
     @Test
@@ -208,7 +203,7 @@ class AuthorControllerTest {
 
         mockMvc.perform(delete(baseUrl + "/" + author1.getId())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNoContent());
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -217,7 +212,7 @@ class AuthorControllerTest {
 
         mockMvc.perform(delete(baseUrl + "/51")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(status().isNotFound())
                 .andExpect(result ->
                         assertTrue(result.getResolvedException() instanceof AuthorNotFoundException))
                 .andExpect(result ->

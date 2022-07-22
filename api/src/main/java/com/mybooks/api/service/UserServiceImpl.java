@@ -2,8 +2,7 @@ package com.mybooks.api.service;
 
 import com.mybooks.api.config.JwtEndpointAccessTokenGenerator;
 import com.mybooks.api.config.JwtSecretKey;
-import com.mybooks.api.dto.LoginRequestDto;
-import com.mybooks.api.dto.SignupRequestDTO;
+import com.mybooks.api.dto.AuthenticationRequestDTO;
 import com.mybooks.api.dto.TokenResponseDTO;
 import com.mybooks.api.exception.InvalidLoginException;
 import com.mybooks.api.exception.InvalidRefreshTokenException;
@@ -43,34 +42,34 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(InvalidLoginException::new);
     }
 
-    public User addUser(SignupRequestDTO signupRequestDto) throws UserAlreadyExistException {
-        userRepository.findByEmail(signupRequestDto.getEmail())
+    public User addUser(AuthenticationRequestDTO requestDTO) throws UserAlreadyExistException {
+        userRepository.findByEmail(requestDTO.getEmail())
                 .ifPresent(s -> {
-                    throw new UserAlreadyExistException(signupRequestDto.getEmail());
+                    throw new UserAlreadyExistException(requestDTO.getEmail());
                 });
 
         User user = User.builder()
-                .email(signupRequestDto.getEmail())
-                .password(passwordEncoder.encode(signupRequestDto.getPassword()))
+                .email(requestDTO.getEmail())
+                .password(passwordEncoder.encode(requestDTO.getPassword()))
                 .roles(Collections.singleton(UserRole.ROLE_USER))
                 .build();
 
-        UserEntity userEntity = userRepository.save(userMapper.transferToUserEntity(user));
-        return userMapper.transferToUser(userEntity);
+        UserEntity savedUser = userRepository.save(userMapper.transferToUserEntity(user));
+        return userMapper.transferToUser(savedUser);
     }
 
-    public TokenResponseDTO login(LoginRequestDto loginRequestDto) throws InvalidLoginException {
-        User user = userRepository.findByEmail(loginRequestDto.getEmail())
+    public TokenResponseDTO login(AuthenticationRequestDTO requestDTO) throws InvalidLoginException {
+        User user = userRepository.findByEmail(requestDTO.getEmail())
                 .map(userMapper::transferToUser)
                 .orElseThrow(InvalidLoginException::new);
 
-        if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(requestDTO.getPassword(), user.getPassword())) {
             throw new InvalidLoginException();
         }
 
         return TokenResponseDTO.builder()
-                .accessToken(jwtEndpointAccessTokenGenerator.createAccessToken(loginRequestDto.getEmail(), user.getRolesAsString()))
-                .refreshToken(jwtEndpointAccessTokenGenerator.createRefreshToken(loginRequestDto.getEmail(), user.getRolesAsString()))
+                .accessToken(jwtEndpointAccessTokenGenerator.createAccessToken(requestDTO.getEmail(), user.getRolesAsString()))
+                .refreshToken(jwtEndpointAccessTokenGenerator.createRefreshToken(requestDTO.getEmail(), user.getRolesAsString()))
                 .build();
     }
 
