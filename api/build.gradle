@@ -3,6 +3,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'application'
+    id 'jacoco'
 }
 
 group 'com.mybooks'
@@ -43,8 +44,36 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.1.Final'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+jacocoTestReport {
+    dependsOn test
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "com/mybooks/api/model/**",
+                    "com/mybooks/api/dto/**",
+                    "com/mybooks/api/mapper/**",
+                    "com/mybooks/api/exception/**",
+                    "com/mybooks/api/config/**"
+            ])
+        }))
+    }
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+def profiles = 'dev'
+
+bootRun {
+    args = ["--spring.profiles.active=" + profiles]
 }

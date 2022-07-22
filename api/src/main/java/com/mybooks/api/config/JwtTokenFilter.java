@@ -4,13 +4,13 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -21,23 +21,18 @@ import java.io.IOException;
 
 import static org.mapstruct.ap.internal.util.Strings.isEmpty;
 
-@Component
+@AllArgsConstructor
 @Slf4j
 public class JwtTokenFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final JwtSecretKey jwtSecretKey;
-
-    public JwtTokenFilter(UserDetailsService userDetailsService, JwtSecretKey jwtSecretKey) {
-        this.userDetailsService = userDetailsService;
-        this.jwtSecretKey = jwtSecretKey;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String TOKEN_PREFIX = "Bearer";
-        if (isEmpty(header) || !header.startsWith(TOKEN_PREFIX)) {
+        if (header == null || isEmpty(header) || !header.startsWith(TOKEN_PREFIX)) {
             filterChain.doFilter(request, response);
             return;
         }
