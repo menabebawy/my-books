@@ -2,6 +2,8 @@ package com.mybooks.api.controller;
 
 import com.mybooks.api.exception.AuthorNotFoundException;
 import com.mybooks.api.exception.BookNotFoundException;
+import com.mybooks.api.exception.InvalidLoginException;
+import com.mybooks.api.exception.UserAlreadyExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -21,7 +23,7 @@ public class ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(BookNotFoundException.class)
     public String handleBookNotFoundException(BookNotFoundException ex) {
-        return String.format("{ \"message\": \"%s\" }", ex.getLocalizedMessage());
+        return String.format("{ \"message\": \"%s\" }", ex.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -33,5 +35,17 @@ public class ExceptionControllerAdvice {
                 .map(ObjectError::getDefaultMessage)
                 .get();
         return String.format("{ \"message\": \"%s\" }", error);
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(UserAlreadyExistException.class)
+    public String handleUserIsAlreadyExistException(UserAlreadyExistException ex) {
+        return String.format("{ \"message\": \"%s\" }", ex.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(InvalidLoginException.class)
+    public String handleInvalidLoginException(InvalidLoginException ex) {
+        return String.format("{ \"message\": \"%s\" }", ex.getMessage());
     }
 }

@@ -1,5 +1,9 @@
 package com.mybooks.api.config;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
@@ -18,12 +22,18 @@ public class DynamoDBConfig {
     public AmazonDynamoDB amazonDynamoDB() {
         return AmazonDynamoDBClientBuilder
                 .standard()
-                .withRegion(Regions.US_WEST_1)
+                .withCredentials(new AWSStaticCredentialsProvider(awsCredentials()))
+                .withRegion(Regions.US_EAST_1)
                 .build();
     }
 
     @Bean
     public DynamoDB dynamoDB() {
         return new DynamoDB(amazonDynamoDB());
+    }
+
+    private AWSCredentials awsCredentials() {
+        AWSCredentialsProvider provider = new DefaultAWSCredentialsProviderChain();
+        return provider.getCredentials();
     }
 }
