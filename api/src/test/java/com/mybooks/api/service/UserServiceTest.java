@@ -6,6 +6,7 @@ import com.mybooks.api.dto.AuthenticationRequestDTO;
 import com.mybooks.api.exception.InvalidLoginException;
 import com.mybooks.api.exception.UserAlreadyExistException;
 import com.mybooks.api.mapper.UserMapper;
+import com.mybooks.api.mapper.UserMapperImpl;
 import com.mybooks.api.model.User;
 import com.mybooks.api.model.UserEntity;
 import com.mybooks.api.model.UserRole;
@@ -13,6 +14,7 @@ import com.mybooks.api.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +32,6 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class UserServiceTest {
     private UserService userService;
-    @Autowired
     private UserMapper userMapper;
     @Mock
     UserRepository userRepository;
@@ -47,6 +48,7 @@ public class UserServiceTest {
 
     @BeforeEach
     void setup() {
+        userMapper = new UserMapperImpl();
         userService = new UserServiceImpl(userRepository, passwordEncoder, userMapper, jwtEndpointAccessTokenGenerator, jwtSecretKey);
     }
 
@@ -85,7 +87,7 @@ public class UserServiceTest {
                 .roles(Collections.singleton(UserRole.ROLE_USER))
                 .build();
         UserEntity userEntity = userMapper.transferToUserEntity(user);
-        when(userRepository.save(userEntity)).thenReturn(userEntity);
+        when(userRepository.save(ArgumentMatchers.any(UserEntity.class))).thenReturn(userEntity);
         User savedUser = userService.addUser(authenticationRequestDTO);
         assertEquals(savedUser.getUsername(), authenticationRequestDTO.getEmail());
     }
