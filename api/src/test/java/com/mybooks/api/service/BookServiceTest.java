@@ -2,6 +2,7 @@ package com.mybooks.api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mybooks.api.dto.BookDTO;
+import com.mybooks.api.dto.BookRequestDTO;
 import com.mybooks.api.exception.BookNotFoundException;
 import com.mybooks.api.mapper.BookMapper;
 import com.mybooks.api.mapper.BookMapperImpl;
@@ -10,6 +11,7 @@ import com.mybooks.api.repository.BookRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -74,11 +76,15 @@ class BookServiceTest {
     @Test
     void createNewBook_success() throws IOException {
         Book book = getMockBook();
-        when(bookRepository.save(book)).thenReturn(book);
-        BookDTO createdBook = bookService.addNewBook(bookMapper.transformToBookDTO(book));
+        when(bookRepository.save(ArgumentMatchers.any(Book.class))).thenReturn(book);
+        BookRequestDTO bookRequestDTO = BookRequestDTO.builder()
+                .title(book.getTitle())
+                .authorId(book.getAuthorId())
+                .build();
+        BookDTO createdBook = bookService.addNewBook(bookRequestDTO);
         assertEquals(createdBook.getTitle(), book.getTitle());
         assertEquals(createdBook.getId(), book.getId());
-        verify(bookRepository, Mockito.times(1)).save(book);
+        verify(bookRepository, Mockito.times(1)).save(ArgumentMatchers.any(Book.class));
     }
 
     @Test

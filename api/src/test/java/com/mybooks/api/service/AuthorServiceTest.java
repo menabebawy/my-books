@@ -2,6 +2,7 @@ package com.mybooks.api.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mybooks.api.dto.AuthorDTO;
+import com.mybooks.api.dto.AuthorRequestDTO;
 import com.mybooks.api.exception.AuthorNotFoundException;
 import com.mybooks.api.mapper.AuthorMapper;
 import com.mybooks.api.mapper.AuthorMapperImpl;
@@ -10,6 +11,7 @@ import com.mybooks.api.repository.AuthorRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -72,13 +74,16 @@ class AuthorServiceTest {
 
     @Test
     void addNewAuthor_success() throws IOException {
+        AuthorRequestDTO authorRequestDTO = AuthorRequestDTO.builder()
+                .firstName(getMockAuthor().getFirstName())
+                .lastName(getMockAuthor().getLastName())
+                .build();
         Author author = getMockAuthor();
-        when(authorRepository.save(author)).thenReturn(author);
-        AuthorDTO authorDTO = authorMapper.transformToAuthorDTO(author);
-        AuthorDTO createdAuthor = authorService.addAuthor(authorDTO);
+        when(authorRepository.save(ArgumentMatchers.any(Author.class))).thenReturn(author);
+        AuthorDTO createdAuthor = authorService.addAuthor(authorRequestDTO);
         assertEquals(createdAuthor.getFirstName(), author.getFirstName());
         assertEquals(createdAuthor.getId(), author.getId());
-        verify(authorRepository, Mockito.times(1)).save(author);
+        verify(authorRepository, Mockito.times(1)).save(ArgumentMatchers.any(Author.class));
     }
 
     @Test

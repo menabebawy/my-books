@@ -2,6 +2,7 @@ package com.mybooks.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mybooks.api.dto.BookDTO;
+import com.mybooks.api.dto.BookRequestDTO;
 import com.mybooks.api.exception.BookNotFoundException;
 import com.mybooks.api.mapper.BookMapper;
 import com.mybooks.api.model.Book;
@@ -93,7 +94,7 @@ class BookControllerTest {
     void addNewBook_success() throws Exception {
         Book newBook = getMockBook();
 
-        when(bookService.addNewBook(ArgumentMatchers.any(BookDTO.class))).thenReturn(bookMapper.transformToBookDTO(newBook));
+        when(bookService.addNewBook(ArgumentMatchers.any(BookRequestDTO.class))).thenReturn(bookMapper.transformToBookDTO(newBook));
 
         mockMvc.perform(post(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON)

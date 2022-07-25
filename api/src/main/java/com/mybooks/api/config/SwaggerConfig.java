@@ -6,6 +6,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpMethod;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -14,7 +15,9 @@ import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.builders.ResponseBuilder;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Response;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.data.rest.configuration.SpringDataRestConfiguration;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -25,6 +28,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 @Configuration
 @EnableSwagger2
@@ -38,7 +43,29 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.mybooks.api.controller"))
                 .paths(PathSelectors.ant("/**"))
-                .build();
+                .build()
+                .useDefaultResponseMessages(false)
+                .globalResponses(HttpMethod.GET, responses())
+                .globalResponses(HttpMethod.DELETE, responses())
+                .globalResponses(HttpMethod.POST, postAndPutResponses())
+                .globalResponses(HttpMethod.PUT, postAndPutResponses());
+    }
+
+    private List<Response> responses() {
+        return newArrayList(
+                new ResponseBuilder().code("401")
+                        .description("Unauthenticated").build(),
+                new ResponseBuilder().code("500")
+                        .description("Internal server error!!!").build(),
+                new ResponseBuilder().code("403")
+                        .description("Forbidden!!!!!").build()
+        );
+    }
+
+    private List<Response> postAndPutResponses() {
+        List<Response> responses = responses();
+        responses().add(new ResponseBuilder().code("400").description("Bad request!!!").build());
+        return responses;
     }
 
     private ApiInfo apiInfo() {

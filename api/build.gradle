@@ -40,6 +40,7 @@ dependencies {
     implementation 'org.mapstruct:mapstruct:1.5.1.Final'
     implementation "io.jsonwebtoken:jjwt:${jjwtVersion}"
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation 'com.google.guava:guava:11.0.2'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
