@@ -1,6 +1,7 @@
 package com.mybooks.api.service;
 
 import com.mybooks.api.dto.AuthorDTO;
+import com.mybooks.api.dto.AuthorRequestDTO;
 import com.mybooks.api.exception.AuthorNotFoundException;
 import com.mybooks.api.mapper.AuthorMapper;
 import com.mybooks.api.repository.AuthorRepository;
@@ -36,7 +37,11 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorDTO addAuthor(AuthorDTO authorDTO) {
+    public AuthorDTO addAuthor(AuthorRequestDTO requestDTO) {
+        AuthorDTO authorDTO = AuthorDTO.builder()
+                .firstName(requestDTO.getFirstName())
+                .lastName(requestDTO.getLastName())
+                .build();
         return Optional.of(authorDTO)
                 .map(authorMapper::transformToAuthor)
                 .map(authorRepository::save)

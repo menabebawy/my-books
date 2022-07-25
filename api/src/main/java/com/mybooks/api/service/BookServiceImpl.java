@@ -1,6 +1,7 @@
 package com.mybooks.api.service;
 
 import com.mybooks.api.dto.BookDTO;
+import com.mybooks.api.dto.BookRequestDTO;
 import com.mybooks.api.exception.BookNotFoundException;
 import com.mybooks.api.mapper.BookMapper;
 import com.mybooks.api.repository.BookRepository;
@@ -36,7 +37,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDTO addNewBook(BookDTO bookDTO) {
+    public BookDTO addNewBook(BookRequestDTO bookRequestDTO) {
+        BookDTO bookDTO = BookDTO.builder()
+                .title(bookRequestDTO.getTitle())
+                .authorId(bookRequestDTO.getAuthorId())
+                .build();
         return Optional.of(bookDTO)
                 .map(bookMapper::transformToBook)
                 .map(bookRepository::save)

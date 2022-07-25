@@ -2,6 +2,7 @@ package com.mybooks.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mybooks.api.dto.AuthorDTO;
+import com.mybooks.api.dto.AuthorRequestDTO;
 import com.mybooks.api.exception.AuthorNotFoundException;
 import com.mybooks.api.mapper.AuthorMapper;
 import com.mybooks.api.model.Author;
@@ -93,17 +94,25 @@ class AuthorControllerTest {
 
     @Test
     void addNewAuthor_success() throws Exception {
-        Author author = getMockAuthor();
-        AuthorDTO authorDTO = authorMapper.transformToAuthorDTO(author);
-        when(authorService.addAuthor(ArgumentMatchers.any(AuthorDTO.class))).thenReturn(authorDTO);
+        AuthorRequestDTO authorRequestDTO = AuthorRequestDTO.builder()
+                .firstName(getMockAuthor().getFirstName())
+                .lastName(getMockAuthor().getLastName())
+                .build();
+
+        AuthorDTO authorDTO = AuthorDTO.builder()
+                .firstName(authorRequestDTO.getFirstName())
+                .lastName(authorRequestDTO.getLastName())
+                .build();
+
+        when(authorService.addAuthor(ArgumentMatchers.any(AuthorRequestDTO.class))).thenReturn(authorDTO);
 
         mockMvc.perform(post(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.mapper.writeValueAsString(authorDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$", Matchers.notNullValue()))
-                .andExpect(jsonPath("$.firstName", Matchers.is(author.getFirstName())))
-                .andExpect(jsonPath("$.lastName", Matchers.is(author.getLastName())));
+                .andExpect(jsonPath("$.firstName", Matchers.is(authorRequestDTO.getFirstName())))
+                .andExpect(jsonPath("$.lastName", Matchers.is(authorRequestDTO.getLastName())));
     }
 
     @Test
