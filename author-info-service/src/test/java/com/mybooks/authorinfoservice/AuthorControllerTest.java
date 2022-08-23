@@ -49,7 +49,6 @@ class AuthorControllerTest {
     ObjectMapper mapper;
     @MockBean
     AuthorServiceImpl authorService;
-
     @Autowired
     AuthorMapper authorMapper;
 
