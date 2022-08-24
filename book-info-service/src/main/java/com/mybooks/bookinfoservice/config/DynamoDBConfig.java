@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRepositories;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
 
 @RequiredArgsConstructor
 @Configuration
@@ -35,10 +34,5 @@ public class DynamoDBConfig {
     private AWSCredentials awsCredentials() {
         AWSCredentialsProvider provider = new DefaultAWSCredentialsProviderChain();
         return provider.getCredentials();
-    }
-
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
     }
 }

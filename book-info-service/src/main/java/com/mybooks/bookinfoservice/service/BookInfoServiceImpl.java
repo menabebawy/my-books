@@ -23,7 +23,7 @@ public class BookInfoServiceImpl implements BookInfoService {
                 .map(mapper::transferToBookDto)
                 .orElseThrow(() -> new BookNotFoundException(id));
 
-        String url = "http://localhost:8082/book/author/" + bookDto.getAuthorId();
+        String url = "http://author-info-service/book/author/" + bookDto.getAuthorId();
         AuthorDto authorDto = restTemplate.getForObject(url, AuthorDto.class);
 
         return BookInfoResponseDto.builder()
