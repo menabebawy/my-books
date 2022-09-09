@@ -1,6 +1,7 @@
-package com.mybooks.oauthservice.config;
+package com.mybooks.clientservice.config;
 
-import com.mybooks.oauthservice.plugin.EmailAnnotationPlugin;
+import com.google.common.collect.Lists;
+import com.mybooks.clientservice.plugin.EmailAnnotationPlugin;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
@@ -28,8 +29,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 @Configuration
 @EnableSwagger2
@@ -85,7 +84,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
     }
 
     private List<Response> responses() {
-        return newArrayList(
+        return Lists.newArrayList(
                 new ResponseBuilder().code("401")
                         .description("Unauthenticated").build(),
                 new ResponseBuilder().code("500")

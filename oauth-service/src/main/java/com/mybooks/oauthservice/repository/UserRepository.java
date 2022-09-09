@@ -1,6 +1,6 @@
-package com.mybooks.oauthservice.repository;
+package com.mybooks.clientservice.repository;
 
-import com.mybooks.oauthservice.model.UserEntity;
+import com.mybooks.clientservice.model.UserEntity;
 import org.socialsignin.spring.data.dynamodb.repository.EnableScan;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;

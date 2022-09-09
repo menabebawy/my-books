@@ -1,4 +1,4 @@
-package com.mybooks.oauthservice.plugin;
+package com.mybooks.clientservice.plugin;
 
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ import static springfox.bean.validators.plugins.Validators.annotationFromBean;
 public class EmailAnnotationPlugin implements ModelPropertyBuilderPlugin {
     @Override
     public void apply(ModelPropertyContext context) {
-        Optional<Email> email = annotationFromBean(context, Email.class);
+        Optional<Email> email = Validators.annotationFromBean(context, Email.class);
         if (email.isPresent()) {
             context.getSpecificationBuilder().facetBuilder(StringElementFacetBuilder.class)
                     .pattern(email.get().regexp());

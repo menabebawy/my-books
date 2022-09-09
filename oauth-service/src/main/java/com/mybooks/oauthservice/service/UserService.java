@@ -1,8 +1,8 @@
-package com.mybooks.oauthservice.service;
+package com.mybooks.clientservice.service;
 
-import com.mybooks.oauthservice.dto.AuthenticationRequestDTO;
-import com.mybooks.oauthservice.exception.UserAlreadyExistException;
-import com.mybooks.oauthservice.model.User;
+import com.mybooks.clientservice.dto.AuthenticationRequestDTO;
+import com.mybooks.clientservice.exception.UserAlreadyExistException;
+import com.mybooks.clientservice.model.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService extends UserDetailsService {

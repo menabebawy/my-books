@@ -1,4 +1,4 @@
-package com.mybooks.oauthservice.model;
+package com.mybooks.clientservice.model;
 
 public enum UserRole {
     ROLE_USER,

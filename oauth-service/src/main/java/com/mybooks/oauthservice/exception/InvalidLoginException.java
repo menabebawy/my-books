@@ -1,4 +1,4 @@
-package com.mybooks.oauthservice.exception;
+package com.mybooks.clientservice.exception;
 
 public class InvalidLoginException extends RuntimeException {
     public InvalidLoginException() {

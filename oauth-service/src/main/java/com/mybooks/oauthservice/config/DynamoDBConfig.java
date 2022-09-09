@@ -1,4 +1,4 @@
-package com.mybooks.oauthservice.config;
+package com.mybooks.clientservice.config;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableDynamoDBRepositories(basePackages = "com.mybooks.oauthservice.repository")
+@EnableDynamoDBRepositories(basePackages = "com.mybooks.clientservice.repository")
 public class DynamoDBConfig {
 
     @Bean

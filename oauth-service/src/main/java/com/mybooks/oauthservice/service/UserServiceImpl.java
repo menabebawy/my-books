@@ -1,13 +1,13 @@
-package com.mybooks.oauthservice.service;
+package com.mybooks.clientservice.service;
 
-import com.mybooks.oauthservice.dto.AuthenticationRequestDTO;
-import com.mybooks.oauthservice.exception.InvalidLoginException;
-import com.mybooks.oauthservice.exception.UserAlreadyExistException;
-import com.mybooks.oauthservice.mapper.UserMapper;
-import com.mybooks.oauthservice.model.User;
-import com.mybooks.oauthservice.model.UserEntity;
-import com.mybooks.oauthservice.model.UserRole;
-import com.mybooks.oauthservice.repository.UserRepository;
+import com.mybooks.clientservice.dto.AuthenticationRequestDTO;
+import com.mybooks.clientservice.exception.InvalidLoginException;
+import com.mybooks.clientservice.exception.UserAlreadyExistException;
+import com.mybooks.clientservice.mapper.UserMapper;
+import com.mybooks.clientservice.model.User;
+import com.mybooks.clientservice.model.UserEntity;
+import com.mybooks.clientservice.model.UserRole;
+import com.mybooks.clientservice.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -44,7 +44,9 @@ public class UserServiceImpl implements UserService {
                 .roles(Collections.singleton(UserRole.ROLE_USER))
                 .build();
 
-        UserEntity savedUser = userRepository.save(userMapper.transferToUserEntity(user));
+        UserEntity newUser = userMapper.transferToUserEntity(user);
+
+        UserEntity savedUser = userRepository.save(newUser);
         return userMapper.transferToUser(savedUser);
     }
 }

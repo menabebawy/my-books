@@ -1,4 +1,4 @@
-package com.mybooks.oauthservice.model;
+package com.mybooks.clientservice.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -57,5 +57,9 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Set<String> getRolesAsString() {
+        return roles.stream().map(UserRole::name).collect(Collectors.toSet());
     }
 }

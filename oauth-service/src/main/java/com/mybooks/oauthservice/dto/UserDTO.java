@@ -1,4 +1,4 @@
-package com.mybooks.oauthservice.dto;
+package com.mybooks.clientservice.dto;
 
 import lombok.Builder;
 import lombok.Value;

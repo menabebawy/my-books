@@ -1,8 +1,8 @@
-package com.mybooks.oauthservice.controller;
+package com.mybooks.clientservice.controller;
 
-import com.mybooks.oauthservice.dto.AuthenticationRequestDTO;
-import com.mybooks.oauthservice.exception.UserAlreadyExistException;
-import com.mybooks.oauthservice.service.UserService;
+import com.mybooks.clientservice.dto.AuthenticationRequestDTO;
+import com.mybooks.clientservice.exception.UserAlreadyExistException;
+import com.mybooks.clientservice.service.UserService;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,6 +18,11 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping
+    public String hello() {
+        return "hello";
     }
 
     @PostMapping("/signup")

@@ -1,4 +1,4 @@
-package com.mybooks.oauthservice.config;
+package com.mybooks.clientservice.config;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
