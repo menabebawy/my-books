@@ -1,4 +1,4 @@
-package com.mybooks.oauthservice.config;
+package com.mybooks.oauthservice.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,7 +23,6 @@ public class SecurityConfig {
                 .formLogin(withDefaults());
 
         return http.build();
-
     }
 
     @Bean
