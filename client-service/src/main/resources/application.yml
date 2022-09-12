@@ -1,0 +1,18 @@
+server:
+  port: 8080
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          mybooks-client-oidc:
+            client-id: client
+            client-secret: secret
+            scope:
+              - openid
+            authorization-grant-type: authorization_code
+            redirect-uri: http://127.0.0.1:8080/login/code/mybooks-client-oidc
+        provider:
+          mybooks-client-oidc:
+            issuer-uri: http://auth-server:9000

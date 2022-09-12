@@ -1,4 +1,4 @@
-package com.mybooks.clientservice.model;
+package com.mybooks.oauthservice.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,7 +1,7 @@
-package com.mybooks.clientservice.mapper;
+package com.mybooks.oauthservice.mapper;
 
-import com.mybooks.clientservice.model.User;
-import com.mybooks.clientservice.model.UserEntity;
+import com.mybooks.oauthservice.model.User;
+import com.mybooks.oauthservice.model.UserEntity;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

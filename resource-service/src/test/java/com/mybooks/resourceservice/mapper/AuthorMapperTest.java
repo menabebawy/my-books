@@ -1,9 +1,11 @@
 package com.mybooks.resourceservice.mapper;
 
-import com.mybooks.api.dto.AuthorDTO;
-import com.mybooks.api.model.Author;
+import com.mybooks.resourceservice.dto.AuthorDTO;
+import com.mybooks.resourceservice.model.Author;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AuthorMapperTest {
     private AuthorMapper authorMapper;

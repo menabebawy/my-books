@@ -1,4 +1,4 @@
-package com.mybooks.clientservice.plugin;
+package com.mybooks.oauthservice.plugin;
 
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;

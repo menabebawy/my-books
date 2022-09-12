@@ -1,12 +1,12 @@
 package com.mybooks.resourceservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mybooks.api.dto.BookDTO;
-import com.mybooks.api.dto.BookRequestDTO;
-import com.mybooks.api.exception.BookNotFoundException;
-import com.mybooks.api.mapper.BookMapper;
-import com.mybooks.api.model.Book;
-import com.mybooks.api.service.BookService;
+import com.mybooks.resourceservice.dto.BookDTO;
+import com.mybooks.resourceservice.dto.BookRequestDTO;
+import com.mybooks.resourceservice.exception.BookNotFoundException;
+import com.mybooks.resourceservice.mapper.BookMapper;
+import com.mybooks.resourceservice.model.Book;
+import com.mybooks.resourceservice.service.BookService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -29,8 +29,7 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

@@ -1,13 +1,13 @@
 package com.mybooks.resourceservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mybooks.api.dto.AuthorDTO;
-import com.mybooks.api.dto.AuthorRequestDTO;
-import com.mybooks.api.exception.AuthorNotFoundException;
-import com.mybooks.api.mapper.AuthorMapper;
-import com.mybooks.api.mapper.AuthorMapperImpl;
-import com.mybooks.api.model.Author;
-import com.mybooks.api.repository.AuthorRepository;
+import com.mybooks.resourceservice.dto.AuthorDTO;
+import com.mybooks.resourceservice.dto.AuthorRequestDTO;
+import com.mybooks.resourceservice.exception.AuthorNotFoundException;
+import com.mybooks.resourceservice.mapper.AuthorMapper;
+import com.mybooks.resourceservice.mapper.AuthorMapperImpl;
+import com.mybooks.resourceservice.model.Author;
+import com.mybooks.resourceservice.repository.AuthorRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

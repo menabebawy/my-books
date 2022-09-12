@@ -1,4 +1,4 @@
-package com.mybooks.clientservice.exception;
+package com.mybooks.oauthservice.exception;
 
 public class UserAlreadyExistException extends RuntimeException {
     public UserAlreadyExistException(String email) {

@@ -1,4 +1,4 @@
-package com.mybooks.clientservice.exception;
+package com.mybooks.oauthservice.exception;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String message) {

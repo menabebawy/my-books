@@ -1,7 +1,7 @@
-package com.mybooks.clientservice.controller;
+package com.mybooks.oauthservice.controller;
 
-import com.mybooks.clientservice.exception.InvalidLoginException;
-import com.mybooks.clientservice.exception.UserAlreadyExistException;
+import com.mybooks.oauthservice.exception.InvalidLoginException;
+import com.mybooks.oauthservice.exception.UserAlreadyExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;

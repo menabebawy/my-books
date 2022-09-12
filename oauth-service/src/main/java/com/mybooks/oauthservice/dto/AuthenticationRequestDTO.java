@@ -1,4 +1,4 @@
-package com.mybooks.clientservice.dto;
+package com.mybooks.oauthservice.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

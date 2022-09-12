@@ -16,6 +16,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation "org.springframework.security:spring-security-oauth2-authorization-server:0.3.1"
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'org.mapstruct:mapstruct:1.5.2.Final'
+    implementation 'com.amazonaws:aws-java-sdk-dynamodb:1.12.290'
+    implementation 'com.github.derjust:spring-data-dynamodb:5.1.0'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.2.Final'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 }

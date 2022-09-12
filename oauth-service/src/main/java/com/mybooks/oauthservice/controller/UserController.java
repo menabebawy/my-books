@@ -1,8 +1,8 @@
-package com.mybooks.clientservice.controller;
+package com.mybooks.oauthservice.controller;
 
-import com.mybooks.clientservice.dto.AuthenticationRequestDTO;
-import com.mybooks.clientservice.exception.UserAlreadyExistException;
-import com.mybooks.clientservice.service.UserService;
+import com.mybooks.oauthservice.dto.AuthenticationRequestDTO;
+import com.mybooks.oauthservice.exception.UserAlreadyExistException;
+import com.mybooks.oauthservice.service.UserService;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;

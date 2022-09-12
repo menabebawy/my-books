@@ -1,13 +1,13 @@
 package com.mybooks.resourceservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mybooks.api.dto.BookDTO;
-import com.mybooks.api.dto.BookRequestDTO;
-import com.mybooks.api.exception.BookNotFoundException;
-import com.mybooks.api.mapper.BookMapper;
-import com.mybooks.api.mapper.BookMapperImpl;
-import com.mybooks.api.model.Book;
-import com.mybooks.api.repository.BookRepository;
+import com.mybooks.resourceservice.dto.BookDTO;
+import com.mybooks.resourceservice.dto.BookRequestDTO;
+import com.mybooks.resourceservice.exception.BookNotFoundException;
+import com.mybooks.resourceservice.mapper.BookMapper;
+import com.mybooks.resourceservice.mapper.BookMapperImpl;
+import com.mybooks.resourceservice.model.Book;
+import com.mybooks.resourceservice.repository.BookRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

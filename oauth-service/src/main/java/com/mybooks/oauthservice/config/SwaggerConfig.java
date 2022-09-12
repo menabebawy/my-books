@@ -1,7 +1,7 @@
-package com.mybooks.clientservice.config;
+package com.mybooks.oauthservice.config;
 
 import com.google.common.collect.Lists;
-import com.mybooks.clientservice.plugin.EmailAnnotationPlugin;
+import com.mybooks.oauthservice.plugin.EmailAnnotationPlugin;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
