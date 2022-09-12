@@ -7,12 +7,13 @@ spring:
       client:
         registration:
           mybooks-client-oidc:
+            provider: spring
             client-id: client
             client-secret: secret
-            scope:
-              - openid
-            authorization-grant-type: authorization_code
-            redirect-uri: http://127.0.0.1:8080/login/code/mybooks-client-oidc
+            authorization-grant-type: client_credentials
+            redirect-uri: "http://127.0.0.1:8080/login/code/mybooks-client-oidc"
+            scope: openid
+            client-name: mybooks-client-oidc
         provider:
-          mybooks-client-oidc:
+          spring:
             issuer-uri: http://auth-server:9000
