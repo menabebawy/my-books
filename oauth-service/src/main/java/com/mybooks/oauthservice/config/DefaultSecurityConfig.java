@@ -14,7 +14,13 @@ public class DefaultSecurityConfig {
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated())
+                .csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/user/signup/**")
+                .permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
                 .formLogin(withDefaults());
 
         return http.build();

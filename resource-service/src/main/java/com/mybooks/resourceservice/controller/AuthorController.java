@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,7 +25,7 @@ public class AuthorController {
         this.authorService = authorService;
     }
 
-    @Secured("ROLE_USER")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = {
@@ -35,7 +35,8 @@ public class AuthorController {
         return authorService.getAllAuthors();
     }
 
-    @Secured("USER")
+
+    @PreAuthorize("hasAuthority('DEVELOPER')")
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = {
