@@ -79,7 +79,7 @@ public class UserServiceTest {
         User user = User.builder()
                 .email(GIVEN_EMAIL)
                 .password(passwordEncoder.encode(GIVEN_PASSWORD))
-                .roles(Collections.singleton(UserRole.ROLE_USER))
+                .roles(Collections.singleton(UserRole.USER))
                 .build();
         UserEntity userEntity = userMapper.transferToUserEntity(user);
         when(userRepository.save(ArgumentMatchers.any(UserEntity.class))).thenReturn(userEntity);

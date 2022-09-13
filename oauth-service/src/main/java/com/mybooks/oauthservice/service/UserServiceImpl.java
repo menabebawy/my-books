@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
         User user = User.builder()
                 .email(requestDTO.getEmail())
                 .password(passwordEncoder.encode(requestDTO.getPassword()))
-                .roles(Collections.singleton(UserRole.ROLE_USER))
+                .roles(Collections.singleton(UserRole.USER))
                 .build();
 
         UserEntity savedUser = userRepository.save(userMapper.transferToUserEntity(user));

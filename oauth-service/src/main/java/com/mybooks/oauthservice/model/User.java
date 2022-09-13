@@ -25,7 +25,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.name()))
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name().toUpperCase()))
                 .collect(Collectors.toSet());
     }
 
@@ -57,9 +57,5 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public Set<String> getRolesAsString() {
-        return roles.stream().map(UserRole::name).collect(Collectors.toSet());
     }
 }

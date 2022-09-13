@@ -63,7 +63,7 @@ public class UserControllerTest {
         User user = User.builder()
                 .email(GIVEN_EMAIL)
                 .password(passwordEncoder.encode(GIVEN_PASSWORD))
-                .roles(Collections.singleton(UserRole.ROLE_USER))
+                .roles(Collections.singleton(UserRole.USER))
                 .build();
 
         when(userService.addUser(authenticationRequestDTO)).thenReturn(user);
