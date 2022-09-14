@@ -14,3 +14,10 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://auth-server:9000
+  application:
+    name: resource-service
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/
