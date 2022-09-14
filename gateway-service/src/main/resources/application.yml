@@ -1,0 +1,18 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: userSignup
+          uri: http://127.0.0.1:9000/user/signup
+          predicates:
+            - Path=/user/signup
+            - Method=POST
+
+        - id: getAllBooks
+          uri: http://127.0.0.1:8090/book
+          predicates:
+            - Path=/book
+            - Method=GET
