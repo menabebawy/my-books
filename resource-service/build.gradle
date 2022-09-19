@@ -30,7 +30,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'com.amazonaws:aws-java-sdk-dynamodb:1.12.290'
+    implementation 'com.amazonaws:aws-java-sdk-dynamodb:1.12.300'
     implementation 'com.github.derjust:spring-data-dynamodb:5.1.0'
     implementation 'org.mapstruct:mapstruct:1.5.2.Final'
     implementation 'com.google.guava:guava:31.1-android'

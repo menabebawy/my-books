@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -17,7 +16,7 @@ public class ResourceServerConfig {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new RoleConverterConfig());
 
-        http
+     /*   http
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -29,5 +28,15 @@ public class ResourceServerConfig {
                 .jwt()
                 .jwtAuthenticationConverter(jwtAuthenticationConverter);
         return http.build();
+
+      */
+
+        return http
+                .cors().and().csrf().disable()
+                .authorizeRequests(expressionInterceptUrlRegistry -> expressionInterceptUrlRegistry
+                        .anyRequest().authenticated())
+                .oauth2ResourceServer().jwt().and()
+                .and()
+                .build();
     }
 }
