@@ -48,7 +48,8 @@ public class ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({ValidationException.class,
             MethodArgumentNotValidException.class,
-            InvalidParameterException.class})
+            InvalidParameterException.class,
+            NotAuthorizedException.class})
     public MessageResponseDto handleValidationException(Exception exception) {
         return MessageResponseDto.builder().message(exception.getMessage()).build();
     }

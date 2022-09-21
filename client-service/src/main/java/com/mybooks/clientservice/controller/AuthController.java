@@ -43,4 +43,10 @@ public class AuthController {
     public MessageResponseDto revokeToken(@RequestParam @Valid String token) {
         return userService.revokeToken(token);
     }
+
+    @PostMapping("/change-password")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public MessageResponseDto changePassword(@RequestBody @Valid ChangePasswordRequestDto request) {
+        return userService.changePassword(request);
+    }
 }

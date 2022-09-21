@@ -12,4 +12,6 @@ public interface UserService {
     MessageResponseDto revokeToken(String token);
 
     MessageResponseDto signup(SignupRequestDto request);
+
+    MessageResponseDto changePassword(ChangePasswordRequestDto request);
 }

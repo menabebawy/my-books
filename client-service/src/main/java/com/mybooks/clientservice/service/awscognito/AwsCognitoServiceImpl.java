@@ -124,6 +124,15 @@ public class AwsCognitoServiceImpl implements AwsCognitoService {
         return Optional.of(awsCognitoIdentityProvider.revokeToken(revokeTokenRequest));
     }
 
+    public Optional<ChangePasswordResult> changePassword(ChangePasswordRequestDto request) {
+        ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest()
+                .withAccessToken(request.getAccessToken())
+                .withPreviousPassword(request.getPreviousPassword())
+                .withProposedPassword(request.getProposedPassword());
+
+        return Optional.of(awsCognitoIdentityProvider.changePassword(changePasswordRequest));
+    }
+
     private String calculateSecretHash(String userName) {
         final String HMAC_SHA256_ALGORITHM = "HmacSHA256";
 
