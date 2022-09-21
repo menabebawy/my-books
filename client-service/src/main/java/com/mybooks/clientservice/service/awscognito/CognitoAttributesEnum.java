@@ -1,4 +1,4 @@
-package com.mybooks.clientservice.service;
+package com.mybooks.clientservice.service.awscognito;
 
 public enum CognitoAttributesEnum {
     USERNAME,
