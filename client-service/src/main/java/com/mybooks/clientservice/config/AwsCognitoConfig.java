@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AwsCognitoConfig {
-
     @Bean
     public AWSCognitoIdentityProvider awsCognitoIdentityProvider() {
         return AWSCognitoIdentityProviderClientBuilder.standard()

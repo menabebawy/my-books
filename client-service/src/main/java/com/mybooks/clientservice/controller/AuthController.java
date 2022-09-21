@@ -1,9 +1,6 @@
 package com.mybooks.clientservice.controller;
 
-import com.mybooks.clientservice.dto.BaseResponseDto;
-import com.mybooks.clientservice.dto.LoginRequestDto;
-import com.mybooks.clientservice.dto.LoginResponseDto;
-import com.mybooks.clientservice.dto.SignupRequestDto;
+import com.mybooks.clientservice.dto.*;
 import com.mybooks.clientservice.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,8 +22,25 @@ public class AuthController {
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public LoginResponseDto login(@RequestBody @Valid LoginRequestDto request) {
+    public AuthenticatedResponseDto login(@RequestBody @Valid LoginRequestDto request) {
         return userService.login(request);
     }
 
+    @GetMapping("/forgot-password")
+    @ResponseStatus(HttpStatus.OK)
+    public MessageResponseDto forgotPassword(@RequestParam @Valid String username) {
+        return userService.forgotPassword(username);
+    }
+
+    @PostMapping("/confirm-forgot-password")
+    @ResponseStatus(HttpStatus.OK)
+    public MessageResponseDto confirmForgotPassword(@RequestBody @Valid ConfirmForgotPasswordRequestDto request) {
+        return userService.confirmForgotPassword(request);
+    }
+
+    @GetMapping("/revoke-token")
+    @ResponseStatus(HttpStatus.OK)
+    public MessageResponseDto revokeToken(@RequestParam @Valid String token) {
+        return userService.revokeToken(token);
+    }
 }

@@ -7,6 +7,6 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return !value.isBlank() && value.length() >= 16 && value.length() >= 8;
+        return !value.isBlank() && value.length() <= 16 && value.length() >= 8;
     }
 }
