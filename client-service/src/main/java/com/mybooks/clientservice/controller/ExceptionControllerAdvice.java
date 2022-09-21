@@ -33,7 +33,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(ExpiredCodeException.class)
     public MessageResponseDto handleExpiredCodeException() {
         return MessageResponseDto.builder()
-                .message("Invalid code provided, please request a code again.")
+                .message("Invalid verification code, please request a code again.")
                 .build();
     }
 
@@ -41,7 +41,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(CodeMismatchException.class)
     public MessageResponseDto handleCodeMismatchException() {
         return MessageResponseDto.builder()
-                .message("Invalid verification code provided")
+                .message("Invalid verification code")
                 .build();
     }
 
@@ -49,7 +49,22 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler({ValidationException.class,
             MethodArgumentNotValidException.class,
             InvalidParameterException.class})
-    public void handleValidationException() {
+    public MessageResponseDto handleValidationException(Exception exception) {
+        return MessageResponseDto.builder().message(exception.getMessage()).build();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UsernameExistsException.class)
+    public MessageResponseDto handleUsernameExistsException(UsernameExistsException exception) {
+        return MessageResponseDto.builder()
+                .message(String.format("User name %s is already exists", exception.getMessage()))
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidPasswordException.class)
+    public MessageResponseDto handleInvalidPasswordException() {
+        return MessageResponseDto.builder().message("Invalid password").build();
     }
 
 }

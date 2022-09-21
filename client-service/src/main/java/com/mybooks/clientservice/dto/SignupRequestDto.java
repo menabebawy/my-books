@@ -8,6 +8,8 @@ import lombok.Value;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Value
@@ -30,6 +32,7 @@ public class SignupRequestDto {
     @ValidPhoneNumber
     String phoneNumber;
 
-    @NotBlank
+    @NotEmpty
+    @NotNull
     Set<String> roles;
 }

@@ -1,9 +1,6 @@
 package com.mybooks.clientservice.service;
 
-import com.mybooks.clientservice.dto.AuthenticatedResponseDto;
-import com.mybooks.clientservice.dto.ConfirmForgotPasswordRequestDto;
-import com.mybooks.clientservice.dto.LoginRequestDto;
-import com.mybooks.clientservice.dto.MessageResponseDto;
+import com.mybooks.clientservice.dto.*;
 
 public interface UserService {
     AuthenticatedResponseDto login(LoginRequestDto request);
@@ -13,4 +10,6 @@ public interface UserService {
     MessageResponseDto confirmForgotPassword(ConfirmForgotPasswordRequestDto request);
 
     MessageResponseDto revokeToken(String token);
+
+    MessageResponseDto signup(SignupRequestDto request);
 }

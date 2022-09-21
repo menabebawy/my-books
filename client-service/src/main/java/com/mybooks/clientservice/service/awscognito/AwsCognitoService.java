@@ -1,8 +1,10 @@
 package com.mybooks.clientservice.service.awscognito;
 
-import com.mybooks.clientservice.dto.AuthenticatedResponseDto;
-import com.mybooks.clientservice.dto.ConfirmForgotPasswordRequestDto;
-import com.mybooks.clientservice.dto.LoginRequestDto;
+import com.amazonaws.services.cognitoidp.model.AdminAddUserToGroupResult;
+import com.amazonaws.services.cognitoidp.model.ConfirmForgotPasswordResult;
+import com.amazonaws.services.cognitoidp.model.RevokeTokenResult;
+import com.amazonaws.services.cognitoidp.model.UserType;
+import com.mybooks.clientservice.dto.*;
 
 import java.util.Optional;
 
@@ -11,7 +13,11 @@ public interface AwsCognitoService {
 
     Optional<String> forgotPassword(String username);
 
-    Optional<String> confirmForgotPassword(ConfirmForgotPasswordRequestDto request);
+    Optional<ConfirmForgotPasswordResult> confirmForgotPassword(ConfirmForgotPasswordRequestDto request);
 
-    public Optional<String> revokeToken(String token);
+    Optional<RevokeTokenResult> revokeToken(String token);
+
+    Optional<AdminAddUserToGroupResult> addUserToGroup(AddUserToGroupRequestDto request);
+
+    Optional<UserType> signup(SignupRequestDto request);
 }
