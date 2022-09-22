@@ -13,5 +13,4 @@ public class AuthenticatedResponseDto {
     String refreshToken;
     Integer expiresIn;
     String tokenType;
-    String username;
 }

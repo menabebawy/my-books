@@ -3,6 +3,7 @@ package com.mybooks.clientservice.dto;
 import com.mybooks.clientservice.annotation.PasswordValueMatch;
 import com.mybooks.clientservice.annotation.ValidPassword;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Value;
 
 import javax.validation.constraints.NotBlank;
@@ -16,6 +17,7 @@ import javax.validation.constraints.NotBlank;
         message = "Passwords do not match!"
 )
 
+@Builder
 public class ConfirmForgotPasswordRequestDto {
     @ValidPassword
     String password;
