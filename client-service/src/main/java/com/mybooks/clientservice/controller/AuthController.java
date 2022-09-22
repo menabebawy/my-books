@@ -26,6 +26,12 @@ public class AuthController {
         return userService.login(request);
     }
 
+    @GetMapping("/access-token")
+    @ResponseStatus(HttpStatus.OK)
+    public AuthenticatedResponseDto accessToken(@RequestBody @Valid RefreshTokenRequestDto request) {
+        return userService.accessToken(request);
+    }
+
     @GetMapping("/forgot-password")
     @ResponseStatus(HttpStatus.OK)
     public MessageResponseDto forgotPassword(@RequestParam @Valid String username) {

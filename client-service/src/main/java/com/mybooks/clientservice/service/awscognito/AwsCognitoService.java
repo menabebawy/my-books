@@ -8,6 +8,8 @@ import java.util.Optional;
 public interface AwsCognitoService {
     Optional<AuthenticatedResponseDto> login(LoginRequestDto request);
 
+    Optional<AuthenticatedResponseDto> accessToken(RefreshTokenRequestDto request);
+
     Optional<String> forgotPassword(String username);
 
     Optional<ConfirmForgotPasswordResult> confirmForgotPassword(ConfirmForgotPasswordRequestDto request);

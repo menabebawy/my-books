@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.amazonaws.services.cognitoidp.model.AuthFlowType.*;
 import static com.amazonaws.services.cognitoidp.model.DeliveryMediumType.EMAIL;
 import static com.amazonaws.services.cognitoidp.model.MessageActionType.SUPPRESS;
 import static com.mybooks.clientservice.service.awscognito.CognitoAttributesEnum.*;
@@ -78,14 +79,28 @@ public class AwsCognitoServiceImpl implements AwsCognitoService {
             put(SECRET_HASH.name(), calculateSecretHash(request.getUsername()));
         }};
 
+        return authenticate(ADMIN_NO_SRP_AUTH, authParams);
+    }
+
+    public Optional<AuthenticatedResponseDto> accessToken(RefreshTokenRequestDto request) {
+        Map<String, String> authParams = new LinkedHashMap<>() {{
+            put(REFRESH_TOKEN.name(), request.getRefreshToken());
+            put(SECRET_HASH.name(), calculateSecretHash(request.getUsername()));
+        }};
+
+        return authenticate(REFRESH_TOKEN_AUTH, authParams);
+    }
+
+    private Optional<AuthenticatedResponseDto> authenticate(AuthFlowType authFlow, Map<String, String> authParams) {
         AdminInitiateAuthRequest authRequest = new AdminInitiateAuthRequest()
-                .withAuthFlow(AuthFlowType.ADMIN_NO_SRP_AUTH)
+                .withAuthFlow(authFlow)
                 .withUserPoolId(awsProperties.getCognito().getUserPoolId())
                 .withClientId(awsProperties.getCognito().getAppClientId())
                 .withAuthParameters(authParams);
 
         AdminInitiateAuthResult authResult = awsCognitoIdentityProvider.adminInitiateAuth(authRequest);
         AuthenticationResultType resultType = authResult.getAuthenticationResult();
+
         return Optional.of(AuthenticatedResponseDto.builder()
                 .accessToken(resultType.getAccessToken())
                 .refreshToken(resultType.getRefreshToken())
@@ -93,6 +108,7 @@ public class AwsCognitoServiceImpl implements AwsCognitoService {
                 .expiresIn(resultType.getExpiresIn())
                 .tokenType(resultType.getTokenType())
                 .build());
+
     }
 
     public Optional<String> forgotPassword(String username) {

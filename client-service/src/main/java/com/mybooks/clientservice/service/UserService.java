@@ -5,6 +5,8 @@ import com.mybooks.clientservice.dto.*;
 public interface UserService {
     AuthenticatedResponseDto login(LoginRequestDto request);
 
+    AuthenticatedResponseDto accessToken(RefreshTokenRequestDto request);
+
     MessageResponseDto forgotPassword(String username);
 
     MessageResponseDto confirmForgotPassword(ConfirmForgotPasswordRequestDto request);

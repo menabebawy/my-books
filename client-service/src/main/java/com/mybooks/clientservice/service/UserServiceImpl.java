@@ -12,8 +12,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public AuthenticatedResponseDto login(LoginRequestDto request) {
-        return awsCognitoService.login(request)
-                .orElseThrow();
+        return awsCognitoService.login(request).orElseThrow();
+    }
+
+    public AuthenticatedResponseDto accessToken(RefreshTokenRequestDto request) {
+        return awsCognitoService.accessToken(request).orElseThrow();
     }
 
     @Override
