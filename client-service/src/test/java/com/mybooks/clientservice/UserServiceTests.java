@@ -1,7 +1,9 @@
-package com.mybooks.clientservice.service;
+package com.mybooks.clientservice;
 
 import com.amazonaws.services.cognitoidp.model.*;
 import com.mybooks.clientservice.dto.*;
+import com.mybooks.clientservice.service.UserService;
+import com.mybooks.clientservice.service.UserServiceImpl;
 import com.mybooks.clientservice.service.awscognito.AwsCognitoService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

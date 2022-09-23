@@ -26,7 +26,7 @@ public class AuthController {
         return userService.login(request);
     }
 
-    @GetMapping("/access-token")
+    @PostMapping("/access-token")
     @ResponseStatus(HttpStatus.OK)
     public AuthenticatedResponseDto accessToken(@RequestBody @Valid RefreshTokenRequestDto request) {
         return userService.accessToken(request);

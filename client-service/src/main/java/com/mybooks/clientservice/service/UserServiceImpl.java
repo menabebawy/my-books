@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
     public MessageResponseDto changePassword(ChangePasswordRequestDto request) {
         return awsCognitoService.changePassword(request)
                 .map(changePasswordResult -> MessageResponseDto.builder()
-                        .message("Password has been changed successfully")
+                        .message("Password has been changed successfully.")
                         .build())
                 .orElseThrow();
     }
