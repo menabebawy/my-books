@@ -1,0 +1,9 @@
+server:
+  port: 8060
+
+spring:
+  application:
+    name: client-service
+  profiles:
+    include:
+      - aws

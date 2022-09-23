@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: userSignup
+          uri: lb://oauth-service/user/signup
+          predicates:
+            - Path=/user/signup
+            - Method=POST
+
+        - id: getAllBooks
+          uri: lb://resource-service/book
+          predicates:
+            - Path=/book
+            - Method=GET
+  application:
+    name: gateway-service
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8761/eureka/
