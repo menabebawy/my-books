@@ -2,7 +2,7 @@
 
 ## Table of Contents
 
-1. [Overview](#overview)
+1. [Overview](#description)
 2. [Technologies](#tech-stack)
 3. [Getting Started](#getting-started)
 4. [Building](#build)
@@ -11,7 +11,7 @@
 7. [Book](#book)
 8. [Author](#author)
 
-## Overview
+## Description
 
 A Book Store server side project in purpose of providing APIs that are used to CRUD books and their authors.
 
