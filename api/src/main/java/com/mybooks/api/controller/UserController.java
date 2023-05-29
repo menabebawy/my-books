@@ -24,8 +24,8 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    @ResponseStatus(HttpStatus.OK)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful new used adding")})
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Successful new used adding")})
     public void signup(
             @Parameter(description = "AuthenticationRequestDTO object that needs to add new user", required = true)
             @Valid @RequestBody AuthenticationRequestDTO requestDTO) throws UserAlreadyExistException {
@@ -36,8 +36,8 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Successful user logging in")})
     public TokenResponseDTO login(
-            @Parameter(description = "Credentials that needs to login the user", required = true)
-            @Valid @RequestBody AuthenticationRequestDTO requestDTO) throws InvalidLoginException {
+            @Parameter(description = "Credentials that needs to login the user", required = true) @Valid @RequestBody
+            AuthenticationRequestDTO requestDTO) throws InvalidLoginException {
         return userService.login(requestDTO);
     }
 
