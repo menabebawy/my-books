@@ -7,7 +7,9 @@
 3. [Getting Started](#getting-started)
 4. [Building](#build)
 5. [REST APIs](#rest-apis)
-6. [Books](#books)
+6. [User](#user)
+7. [Book](#book)
+8. [Author](#author)
 
 ## Overview
 
@@ -33,7 +35,12 @@ A Book Store server side project in purpose of providing APIs that are used to C
 Create the particular tables on AWS DynamoDB and make sure to provide your AWS credentials in order to run successfully
 the app.
 
-You can rely on model `infrastracture` where these tables are created by AWS CDK JAVA.
+You can rely on model `infrastracture` where these tables are created by AWS CDK JAVA. All APIs are defined on model
+`api` .
+
+You have to authorize firstly to get `access token` & `refresh token`, then use `refresh token` to gain a new
+`access token` if it expires. Books and authors APIs are exposed by `access token`, otherwise you will get `401
+Unauthorized`.
 
 ### Build
 
@@ -43,7 +50,48 @@ From the root folder, just execute the following command which will build/run un
 
 ### REST APIs
 
-#### Books
+#### User
+
+1. Login user `POST /user/login`
+
+   Request body
+   ```json
+    {
+      "email": "foo.bar@test.com",
+      "password": "user@123"
+    }
+    ```
+   Response `200`
+
+    ```json
+    {
+      "accessToken": "{access_token}",
+      "refreshToken": "{refreshToken}"
+    }
+    ```
+
+2. Signup new user `POST /user/signup`
+
+   Request body
+   ```json
+    {
+      "email": "foo.bar@test.com",
+      "password": "user@123"
+    }
+    ```
+   Response `201`
+
+3. Refresh access token `GET /user/refresh-token`
+
+   Response `200`
+    ```json
+    {
+      "accessToken": "{access_token}",
+      "refreshToken": "{refreshToken}"
+    }
+    ```
+
+#### Book
 
 1. Get book by id `GET /book/{id}`
 
@@ -59,6 +107,13 @@ From the root folder, just execute the following command which will build/run un
 
 2. Add new book `POST /book`
 
+   Request body
+   ```json
+    {
+      "title": "Sky is not far",
+      "authorId": "112bf093-a47e-4d09-a2a8-02c20ef5e2f7"
+    }
+    ```
    Response `201`
     ```json
     {
@@ -78,5 +133,50 @@ From the root folder, just execute the following command which will build/run un
     ```
 
 4. Delete a book `DELETE /book/{id}`
+
+   Response `204`
+
+#### Author
+
+1. Get author by id `GET /author/{id}`
+
+   Response `200`
+
+    ```json
+    {
+      "id": "112bf093-a47e-4d09-a2a8-02c20ef5e2f7",
+      "firstName": "Foo",
+      "lastName": "Bar"
+    }
+    ```
+
+2. Add new author `POST /author`
+
+   Request body
+   ```json
+    {
+      "firstName": "Json",
+      "lastName": "Jakarta"
+    }
+    ```
+   Response `201`
+    ```json
+    {
+      "id": "81f4ee81-9e40-4a8d-a0c7-0d9df3e6ee2a"
+    }
+    ```
+
+3. Update an author `PUT /author/{id}`
+
+   Response `200`
+    ```json
+    {
+      "id": "81f4ee81-9e40-4a8d-a0c7-0d9df3e6ee2a",
+      "firstName": "Json",
+      "lastName": "Bar"
+    }
+    ```
+
+4. Delete an author `DELETE /book/{id}`
 
    Response `204`
